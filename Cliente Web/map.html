@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de calidad</title>
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.1/css/all.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/map.css" />
+  </head>
+  <body>
+    <div class="mapa"></div>
+    <div class="modal">
+      <div class="tarjeta-login">
+        <h3>Iniciar Sesión</h3>
+        <form action="">
+          <!-- <label for="uname"><b>Username</b></label> -->
+          <input
+            id="inputCorreo"
+            type="email"
+            placeholder="Correo"
+            name="email"
+            required
+          />
+
+          <!-- <label for="psw"><b>Password</b></label> -->
+          <input
+            id="inputContrasenya"
+            type="password"
+            placeholder="Contraseña"
+            name="psw"
+            required
+          />
+          <span class="olvide-contrasenya"
+            ><a href="">Olvidé mi contraseña</a></span
+          >
+          <button id="btnSubmit" type="submit">Iniciar Sesión</button>
+
+          <span class="frase-registro"
+            >Para tener cuenta necesita disponer de un sensor.
+            <a href="./index.html"> Infórmese aquí!</a></span
+          >
+        </form>
+      </div>
+    </div>
+    <div class="top-opciones">
+      <div class="menu">
+        <a href="" class="icono" onclick="">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+      <div class="buscar">
+        <input type="text" placeholder="Buscar..." />
+      </div>
+      <div class="perfil">
+        <!-- <div class="bg-icono"><i class="fas fa-user"></i></div> -->
+        <i class="fas fa-user icono-usuario"></i>
+      </div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
+      integrity="sha512-nOQuvD9nKirvxDdvQ9OMqe2dgapbPB7vYAMrzJihw5m+aNcf0dX53m6YxM4LgA9u8e9eg9QX+/+mPu8kCNpV2A=="
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./scripts/logica.js"></script>
+    <script src="./scripts/modalLogin.js"></script>
+    <script src="./scripts/login.js"></script>
+  </body>
+</html>
