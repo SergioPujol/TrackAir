@@ -212,13 +212,13 @@ public class ReceptorBluetooth {
         Log.d(ETIQUETA_LOG, " ****************************************************");
 
         Log.d(ETIQUETA_LOG, " ----------------------------------------------------");
-        Log.d(ETIQUETA_LOG, "Distancia estimada entre el Sensor: " + obtenerDistanciaEstimadaSensorYDispositivo(tib.getTxPower(), rssi));
+        Log.d(ETIQUETA_LOG, "Distancia estimada entre el Sensor: " + obtenerDistanciaEstimadaEntreSensorYDispositivo(tib.getTxPower(), rssi));
         Log.d(ETIQUETA_LOG, " ----------------------------------------------------");
 
     } // ()
 
     // <Byte>, <Byte> --> obtenerDistanciaEstimadaSensorYDispositivo() --> <R>
-    public double obtenerDistanciaEstimadaSensorYDispositivo(int txPower, int rssi) { //El sensor debe estar emitiendo para poder obtener la distancia estimada
+    public double obtenerDistanciaEstimadaEntreSensorYDispositivo(int txPower, int rssi) { //El sensor debe estar emitiendo para poder obtener la distancia estimada
 
         // Distancia = 10 ^ ((Potencia medida - RSSI) / (10 * N))
         if (rssi == 0) {
