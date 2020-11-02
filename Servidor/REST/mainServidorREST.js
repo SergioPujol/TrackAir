@@ -31,7 +31,7 @@ function cargarLogica(fichero) {
 
 async function main() {
     
-    var laLogica = await cargarLogica("bd")
+    var laLogica = await cargarLogica("p3a")
     
     // creo el servidor
     var servidorExpress = express()

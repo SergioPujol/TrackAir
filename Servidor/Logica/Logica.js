@@ -23,9 +23,9 @@ module.exports = class Logica {
             password: '1234',
             database: nombreBD
         })
-        
+
         this.laConexion.connect(function (err) {
-            
+
             if (err) throw err;
             console.log("Connected!");
             cb(this.laConexion)
@@ -53,58 +53,122 @@ module.exports = class Logica {
 
     async borrarFilasDeTodasLasTablas() {
 
+        await this.borrarFilasDe("codigosrecompensas")
+        await this.borrarFilasDe("tipomedidas")
         await this.borrarFilasDe("mediciones")
+        await this.borrarFilasDe("usuarios")
+        await this.borrarFilasDe("medicionesdeusuarios")
+        await this.borrarFilasDe("recompensas")
     } // ()
-
-    // .................................................................
-    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
+    
+    // ...............................................................................
+    // datos:{nombreUsuario:Texto, contrasenya:Texto, correo:Texto, Puntuacion:Z}
     // -->
-    // insertarMedicion() -->
-    // .................................................................
+    // insertarUsuario() -->
+    // ...............................................................................
+    insertarUsuario(datos) {
 
-    insertarMedicion(datos) {
-
-        var textoSQL = 'insert into mediciones values(?, ?, ?);'
+        var textoSQL = 'insert into usuarios (nombre_usuario, contrasenya, correo, puntuacion) values(?, ?, ?, ?);'
 
         return new Promise((resolver, rechazar) => {
 
-            this.laConexion.query(textoSQL, [datos.valor, datos.momento, datos.ubicacion], function (err) {
+            this.laConexion.query(textoSQL, [datos.nombreUsuario, datos.contrasenya, datos.correo, datos.puntuacion], function (err) {
 
                 (err ? rechazar(err) : resolver())
             })
         })
     } // ()
+    
+    // ...............................................................................
+    //datos:{nombreUsuario:Texto, contrasenya=Texto}
+    // -->
+    // buscarUsuarioConId() <--
+    // <--
+    // datos:{id:Z, nombreUsuario:Texto, contrasenya:Texto, correo:Texto, Puntuacion:Z}
+    // ...............................................................................
+    buscarUsuarioConNombreYContrasenya(datos) {
 
-    // .................................................................
-    // 
-    //datos:{momento:Datetime, ubicacion:Texto}
+        var textoSQL = "select * from usuarios where nombre_usuario= ? and contrasenya= ?";
+
+        return new Promise((resolver, rechazar) => {
+            this.laConexion.query(textoSQL, [datos.nombreUsuario, datos.contrasenya], (err, res) => {
+                (err ? rechazar(err) : resolver(res))
+            })
+        })
+    }
+    
+    actualizarUsuario(){
+        
+    }
+
+    // ...............................................................................
+    // datos:{idUsuario:Z, valor:Real, momento:Datetime, ubicacion:Punto, tipoMedicion:Texto}
+    // -->
+    // insertarMedicion() -->
+    // ...............................................................................
+    insertarMedicion(datos) {
+
+        var textoSQL = 'insert into mediciones values(?, ?, ?, ?);'
+
+        return new Promise((resolver, rechazar) => {
+
+            this.laConexion.query(textoSQL, [datos.valor, datos.momento, datos.ubicacion, datos.tipoMedicion], function (err) {
+
+                (err ? rechazar(err) : resolver())
+            })
+        })
+        
+        var textoSQL2 = 'insert into medicionesdeusuarios values(?, ?, ?);'
+
+        return new Promise((resolver, rechazar) => {
+
+            this.laConexion.query(textoSQL2, [datos.idUsuario, datos.momento, datos.ubicacion], function (err) {
+
+                (err ? rechazar(err) : resolver())
+            })
+        })
+        
+    } // ()
+
+    // ...............................................................................
+    //datos:{momento:Datetime, ubicacion:Punto, idUsuario:Z}
     // -->
     // buscarMedicionConMomentoYUbicacion() <--
     // <--
-    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
-    // .................................................................
-
+    // datos:{valor:Real, momento:Datetime, ubicacion:Punto, tipoMedicion:Texto}
+    // ...............................................................................
     buscarMedicionConMomentoYUbicacion(datos) {
 
-        var textoSQL = "select * from mediciones where momento= ? and ubicacion= ?";
-        
+        var textoSQL = "select valor,momento,ubicacion,tipoMedicion from mediciones, medicionesdeusuarios where momento= ? and ubicacion= ? and id_usuario= ?";
+
         return new Promise((resolver, rechazar) => {
-            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion], (err, res) => {
+            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion, datos.idUsuario], (err, res) => {
+                (err ? rechazar(err) : resolver(res))
+            })
+        })
+    }
+    
+    buscarMedicionDeUsuario(idUsuario){
+        
+        var textoSQL = "select * from medicionesdeusuarios where idusuario= ?";
+
+        return new Promise((resolver, rechazar) => {
+            this.laConexion.query(textoSQL, [idUsuario], (err, res) => {
                 (err ? rechazar(err) : resolver(res))
             })
         })
     }
 
-    // .................................................................
-    // 
-    // buscarUltimaMedicion() <--
-    // <--
-    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
-    // .................................................................
-
-    buscarUltimaMedicion() {
-
-        var textoSQL = "select * from mediciones order by momento desc limit 1";
+    async buscarMedicionesDeUsuario(id){
+                
+        ubicacionesYMomentos= await this.buscarMedicionDeUsuario(id);
+        //Añadir a una lista los diferentes valores de buscarMedicionConMomentoYUbicacion y retornar
+        
+    }
+    
+    buscarTodasLasMediciones(){
+        
+        var textoSQL = "select * from mediciones";
 
         return new Promise((resolver, rechazar) => {
             this.laConexion.query(textoSQL, (err, res) => {
@@ -112,6 +176,18 @@ module.exports = class Logica {
             })
         })
     }
+    
+    buscarTipoMedidicionConID(id){
+        
+        var textoSQL = "select * from tipomedida where id= ?";
+
+        return new Promise((resolver, rechazar) => {
+            this.laConexion.query(textoSQL, [id], (err, res) => {
+                (err ? rechazar(err) : resolver(res))
+            })
+        })
+    }   
+    
 
     // .................................................................
     // cerrar() -->
@@ -120,7 +196,7 @@ module.exports = class Logica {
     cerrar() {
 
         return new Promise((resolver, rechazar) => {
-            
+
             this.laConexion.end((err) => {
 
                 (err ? rechazar(err) : resolver())
