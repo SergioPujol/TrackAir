@@ -1,71 +1,130 @@
-const mysql = require("mysql");
+// .....................................................................
+// Logica.js
+// .....................................................................
+
+const mysql = require("mysql")
+
+// .....................................................................
+// .....................................................................
 
 module.exports = class Logica {
 
-    // Texto --> constructor() , Modifica
-    constructor(nombreBDD, callback) {
+    // .................................................................
+    // nombreBD: Texto
+    // -->
+    // constructor () -->
+    // .................................................................
+
+    constructor(nombreBD, cb) {
+
         this.laConexion = new mysql.createConnection({
-            host: "192.168.64.2", //localhost
-            user: "sergiopujol",
-            password: "12345",
-            database: nombreBDD
-        });
-        this.laConexion.connect(function (error) {
-            if (error) callback(error);
-            console.log("Conectado");
-
-            callback(this.laConexion)
+            host: 'localhost',
+            user: 'David',
+            password: '1234',
+            database: nombreBD
         })
-    }
+        
+        this.laConexion.connect(function (err) {
+            
+            if (err) throw err;
+            console.log("Connected!");
+            cb(this.laConexion)
+        });
 
+    } // ()
 
-    // {valor: int , momento: texto, ubicacion: texto} --> insertarMedicion(), Modifica
-    insertarMedicion(dato) {
-        var textoSQL = 'insert into Mediciones values(?, ?, ?);'
-        var valoresParaSQL = {
-            $momento: dato.momento,
-            $ubicacion: dato.ubicacion,
-            $valor: dato.valor
-        }
+    // .................................................................
+    // nombreTabla:Texto
+    // -->
+    // borrarFilasDe() -->
+    // .................................................................
+
+    borrarFilasDe(tabla) {
+
         return new Promise((resolver, rechazar) => {
-            this.laConexion.query(textoSQL, [valoresParaSQL.$momento, valoresParaSQL.$ubicacion, valoresParaSQL.$valor], function (error) {
-                (error ? rechazar(error) : resolver(true))
+
+            this.laConexion.query("delete from " + tabla + ";", (err) => (err ? rechazar(err) : resolver()))
+        })
+    } // ()
+
+    // .................................................................
+    // borrarFilasDeTodasLasTablas() -->
+    // .................................................................
+
+    async borrarFilasDeTodasLasTablas() {
+
+        await this.borrarFilasDe("mediciones")
+    } // ()
+
+    // .................................................................
+    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
+    // -->
+    // insertarMedicion() -->
+    // .................................................................
+
+    insertarMedicion(datos) {
+
+        var textoSQL = 'insert into mediciones values(?, ?, ?);'
+
+        return new Promise((resolver, rechazar) => {
+
+            this.laConexion.query(textoSQL, [datos.valor, datos.momento, datos.ubicacion], function (err) {
+
+                (err ? rechazar(err) : resolver())
             })
         })
-    }
+    } // ()
+
+    // .................................................................
+    // 
+    //datos:{momento:Datetime, ubicacion:Texto}
+    // -->
+    // buscarMedicionConMomentoYUbicacion() <--
+    // <--
+    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
+    // .................................................................
 
     buscarMedicionConMomentoYUbicacion(datos) {
-		var textoSQL = "select * from Mediciones where momento = ? and ubicacion = ?;";
-		var valoresParaSQL = {
-			$momento: datos.momento,
-			$ubicacion: datos.ubicacion
-		}
-		return new Promise((resolver, rechazar) => {
-			this.laConexion.query(textoSQL, [valoresParaSQL.$momento,valoresParaSQL.$ubicacion], (err, res) => {
-				(
-					err ? rechazar(err) : resolver(res))
-			})
-		})
-	} // ()
 
-    // obtenerMedicion() --> {valor: int , momento: tiempo, ubicacion: texto}, Consulta
-    obtenerMediciones() {
-        var textoSQL = 'select * from Mediciones';
+        var textoSQL = "select * from mediciones where momento= ? and ubicacion= ?";
+        
+        return new Promise((resolver, rechazar) => {
+            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion], (err, res) => {
+                (err ? rechazar(err) : resolver(res))
+            })
+        })
+    }
+
+    // .................................................................
+    // 
+    // buscarUltimaMedicion() <--
+    // <--
+    // datos:{valor:Real, momento:Datetime, ubicacion:Texto}
+    // .................................................................
+
+    buscarUltimaMedicion() {
+
+        var textoSQL = "select * from mediciones order by momento desc limit 1";
+
         return new Promise((resolver, rechazar) => {
             this.laConexion.query(textoSQL, (err, res) => {
-                (
-                    err ? rechazar(err) : resolver(res))
+                (err ? rechazar(err) : resolver(res))
             })
         })
     }
 
-    // cerrar() , Modifica
+    // .................................................................
+    // cerrar() -->
+    // .................................................................
+
     cerrar() {
+
         return new Promise((resolver, rechazar) => {
-            this.Conexion.close((error) => {
-                (error ? rechazar(error) : resolver())
+            
+            this.laConexion.end((err) => {
+
+                (err ? rechazar(err) : resolver())
             })
         })
-    }
-
-}
+    } // ()
+} // class
