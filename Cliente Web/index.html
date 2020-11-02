@@ -1,88 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mediciones</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing page</title>
+    <link rel="stylesheet" href="/styles/landing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Montserrat&display=swap"
+        rel="stylesheet">
 </head>
-
-<style>
-    table,
-    th,
-    td {
-
-        border: 1px solid black;
-    }
-
-    div {
-
-        display: flex;
-        justify-content: space-around;
-    }
-
-    fieldset,
-    table {
-
-        width: 550px;
-        padding: 10px 10px 10px 10px;
-    }
-
-</style>
-
-<body onload="rellenarListas()">
-
-    <div>
-        <table id="mediciones">
-
-            <caption style="font-size: 25px">Medicion</caption>
-
-            <tr>
-
-                <th>momento</th>
-                <th>ubicacion</th>
-                <th>valor</th>
-
-            </tr>
-        </table>
-
-        <button onClick="window.location.reload();">Actualizar Tabla</button>
-
-    </div>
-
-   
-
-    <script>
-
-        /*window.onload = function () {
-            setInterval(() => {
-        rellenarListas();
-        }, 4000);
-        };*/
-
-        var IP_PUERTO = "http://192.168.43.245:8080/"
-
-        function rellenarListas() {
-
-            fetch(IP_PUERTO + "obtenerMediciones", {
-
-                    headers: {
-
-                        'User-Agent': 'SergioPujol'
-                    }
-                })
-                .then(res => res.json())
-                .then(function(res) {
-
-                    for (var i = 0; i < res.length; i++) {
-
-                        document.getElementById("mediciones").innerHTML += "<tr><td>" + res[i].momento + "</td><td>" + res[i].ubicacion + "</td><td>" + res[i].valor + "</td></tr>"
-                    }
-                })
-            }
-        
-
-        
-    </script>
+<body>
+    <header>
+        <div class="content">
+        <div class="texto-header">
+            <h1>TrackAir</h1>
+            <h2>Caminamos por un aire limpio</h2>
+            <a href="/map.html">Ver mapa</a>
+            <a href="/mediciones.html">Ver datos</a>
+        </div>
+        <img src="/images/familia.png" alt="">
+        </div>
+    </header>
+    <div class="borde">
+        <div style="height: 150px; overflow: hidden;"><svg viewBox="0 0 500 150" preserveAspectRatio="none"
+                style="height: 100%; width: 100%;">
+                <path d="M0.00,49.98 C150.00,150.00 349.20,-50.00 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"
+                    style="stroke: none; fill: #fff;"></path>
+            </svg></div>
+    
 </body>
-
 </html>

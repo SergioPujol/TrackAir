@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- Autor: Ignasi MarÍ Giner -->
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mediciones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/mediciones.css" />
+
+</head>
+
+<body>
+    <header></header>
+    </br></br></br>
+    <section class="mediciones-container">
+        <h3>Gases Irritantes</h3>
+        <div class="top-row">
+            <div class="cell">Instante</div>
+            <div class="cell">Valor (ppm)</div>
+            <div class="cell">Ubicación</div>
+        </div>
+
+        <div class="mediciones-content" id="mediciones-content">
+            Cargando...
+        </div>
+    </section>
+    <section id="btn-container"><button id="btn-test">Test</button></section>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="Logica.js"></script>
+    <script src="/scripts/mediciones.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Montserrat';
+}
+
+header{
+   background: #00C9FF;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #92FE9D, #00C9FF);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #92FE9D, #00C9FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    height: auto;
+    padding: 48px;
+    width: 100%;
+}
+
+.content{
+    width: 95%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: auto;
+}
+
+img{
+    display: block;
+    height: 450px;
+    object-fit: cover;
+    animation: arriba 1s ease-in;
+}
+
+.texto-header{
+    width: 50%;
+    color:#577a68d2;
+}
+
+.texto-header h1{
+    font-size:80px;
+    animation: moverDerecha 1s ease-in;
+    font-family: 'Comfortaa';
+
+}
+
+.texto-header h2{
+    font-size:30px;
+    animation: moverIzquierda 1s ease-in;
+}
+
+.texto-header a{
+    display: inline-block;
+    color:#577a68d2;
+    font-weight: 800;
+    text-decoration: none;
+    margin-top: 30px;
+    border: 2px solid #577a6888;
+    width: 150px;
+    border-radius: 3px;
+    text-align: center;
+    padding: 10px 0;
+    animation: arriba 1s ease-in;
+
+}
+
+.borde{
+    height: 150px;
+    width: 100%;
+   background: #00C9FF;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #92FE9D, #00C9FF);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #92FE9D, #00C9FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+@keyframes moverIzquierda{
+    0%{
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+@keyframes moverDerecha{
+    0%{
+        opacity: 0;
+        transform: translateX(100px);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+@keyframes arriba{
+    0%{
+        opacity: 0;
+        transform: translateY(100px);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+@media screen and (max-width:1000px){
+    img{
+        height: 400px;
+    }
+
+}
+
+@media screen and (max-width:800px){
+    img{
+        height: 370px;
+    }
+    .texto-header h1{
+        font-size: 70px;
+    }
+
+    .texto-header h2{
+        font-size: 25px;
+    }
+    
+}
+
+@media screen and (max-width:700px){
+    img{
+        height: 250px;
+    }
+    .texto-header h1{
+        font-size: 40px;
+    }
+
+    .texto-header h2{
+        font-size: 15px;
+    }
+    header{
+        flex-direction: column;
+    }
+    
+}
+
+@media screen and (max-width:450px){
+    .content{
+        width: 100%;
+        flex-wrap: wrap-reverse;
+        justify-content: center;
+    }
+    .texto-header{
+        width: 100%;
+        text-align: center;
+    }
+    .texto-header h1{
+        font-size: 60px;
+    }    
+}
+
+@media screen and (max-width:340px){
+    img{
+        height: 160px;
+    }
+    .texto-header h1{
+        font-size: 35px;
+    }
+    .texto-header a{
+        width: 120px;
+    }
+}
