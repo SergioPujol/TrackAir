@@ -25,13 +25,13 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         // llamo a la función adecuada de la lógica
         var res = await laLogica.buscarTodasLasMediciones();
         // si el array de resultados no tiene una casilla ...
-        if (res.length != 1) {
+        if (res.length == 1) {
             // 404: not found
             respuesta.status(404).send("No encontré la medicion")
             return
         }
         // todo ok
-        respuesta.send(JSON.stringify(res[0]))
+        respuesta.send(JSON.stringify(res))
     }) // get /mediciones
 
     // .......................................................
@@ -41,13 +41,13 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     servidorExpress.get('/mediciones/:idUsuario', async function (peticion, respuesta) {
 
         console.log(" * GET /mediciones/:idUsuario ")
-        
+
         // averiguo el id
         var id = peticion.params.idUsuario
         // llamo a la función adecuada de la lógica
         var res = await laLogica.buscarMedicionesDeUsuario(id)
-
-        if (res.length != 1) {
+        //Si el array esta vacío
+        if (res.length == 0) {
             // 404: not found
             respuesta.status(404).send("No encontré la medicion")
             return
@@ -78,7 +78,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
 
         respuesta.send(JSON.stringify(res[0]))
     }) // post /medicion
-    
+
     // .......................................................
     // GET /tipoMedicion/:idMedicion
     // .......................................................
@@ -86,12 +86,12 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     servidorExpress.get('/tipoMedicion/:idMedicion', async function (peticion, respuesta) {
 
         console.log(" * GET /tipoMedicion/:idMedicion ")
-        
+
         // averiguo el id
         var id = peticion.params.idMedicion
         // llamo a la función adecuada de la lógica
         var res = await laLogica.buscarTipoMedidicionConID(id)
-
+        //Si no encuentra el tipo de medicion
         if (res.length != 1) {
             // 404: not found
             respuesta.status(404).send("No encontré el tipo de medicion")
@@ -100,23 +100,19 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         // todo ok
         respuesta.send(JSON.stringify(res[0]))
     }) // get /tipoMedicion/:idMedicion
-    
+
     // .......................................................
-    // GET /login/
+    // GET /usuario/
     // .......................................................
 
-    servidorExpress.get('/login/:nombre/:contrasenya', async function (peticion, respuesta) {
+    servidorExpress.get('/usuario/:idUsuario', async function (peticion, respuesta) {
 
-        console.log(" * GET /login/:idMedicion ")
-        
-        // averiguo el nombre y la contrasenya
-        datos= {
-            
-            nombreUsuario: peticion.params.nombre,
-            contrasenya: peticion.params.contrasenya
-        }
+        console.log(" * GET /usuario/:idUsuario ")
+
+        // averiguo el id
+        var id = peticion.params.idUsuario
         // llamo a la función adecuada de la lógica
-        var res = await laLogica.buscarUsuarioConNombreYContrasenya(datos)
+        var res = await laLogica.buscarUsuarioConId(id)
 
         if (res.length != 1) {
             // 404: not found
@@ -125,13 +121,13 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         }
         // todo ok
         respuesta.send(JSON.stringify(res[0]))
-    }) // get /login
-    
+    }) // get /usuario
+
     // .......................................................
-    // POST /login
+    // POST /usuario
     // .......................................................
 
-    servidorExpress.post('/login', async function (peticion, respuesta) {
+    servidorExpress.post('/usuario', async function (peticion, respuesta) {
 
         console.log(" * POST /login ")
 
@@ -140,7 +136,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         await laLogica.insertarUsuario(datos)
         var res = await laLogica.buscarUsuarioConNombreYContrasenya(datos)
 
-        // supuesto procesamiento
+        // Si no encuentra el usuario
         if (res.length != 1) {
 
             respuesta.status(404).send("No se ha podido insertar el usuario")
@@ -148,7 +144,36 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         }
 
         respuesta.send(JSON.stringify(res[0]))
+    }) // post /usuario   
+    
+    // .......................................................
+    // PUT /editarUsuario
+    // .......................................................
+
+    servidorExpress.put('/editarUsuario', async function (peticion, respuesta) {
+
+        console.log(" * PUT /editarUsuario ")
+
+        var datos = JSON.parse(peticion.body)
+        var res= await laLogica.editarUsuario(datos)
+
+        respuesta.send("Se ha actualizado correctamente el usuario:" + datos.nombreUsuario);
+    }) // put /editarUsuario   
+    
+    // .......................................................
+    // GET /login/:nombre/:contrasenya
+    // .......................................................
+
+    servidorExpress.post('/login', async function (peticion, respuesta) {
+
+        console.log(" * POST /login ")
+
+        var datos = JSON.parse(peticion.body)
+        // llamo a la función adecuada de la lógica
+        var usuario = await laLogica.buscarUsuarioConNombreYContrasenya(datos)
+
+        //Si existe el usuario devolvemos true
+        if (usuario.length == 1) respuesta.send(true)
+        else respuesta.send(false)
     }) // post /login
-    
-    
 } // cargar()
