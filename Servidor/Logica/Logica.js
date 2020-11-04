@@ -267,6 +267,21 @@ module.exports = class Logica {
         })
     }
 
+    // ...............................................................................
+    // buscarRecompensas() <--
+    // <--
+    // Lista {id:Texto, titulo:Texto, descripcion:Texto, coste:Z}
+    // ...............................................................................
+    buscarRecompensas(){
+        
+        var textoSQL = "select * from recompensas";
+
+        return new Promise((resolver, rechazar) => {
+            this.laConexion.query(textoSQL, (err, res) => {
+                (err ? rechazar(err) : resolver(res))
+            })
+        })
+    }
 
     // .................................................................
     // cerrar() -->

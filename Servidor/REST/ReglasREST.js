@@ -17,7 +17,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // GET /mediciones
     // .......................................................
-
     servidorExpress.get('/mediciones', async function (peticion, respuesta) {
 
         console.log(" * GET /mediciones ")
@@ -25,7 +24,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         // llamo a la función adecuada de la lógica
         var res = await laLogica.buscarTodasLasMediciones();
         // si el array de resultados no tiene una casilla ...
-        if (res.length == 1) {
+        if (res.length == 0) {
             // 404: not found
             respuesta.status(404).send("No encontré la medicion")
             return
@@ -37,7 +36,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // GET /mediciones/:idUsuario
     // .......................................................
-
     servidorExpress.get('/mediciones/:idUsuario', async function (peticion, respuesta) {
 
         console.log(" * GET /mediciones/:idUsuario ")
@@ -59,7 +57,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // POST /medicion
     // .......................................................
-
     servidorExpress.post('/medicion', async function (peticion, respuesta) {
 
         console.log(" * POST /medicion ")
@@ -82,7 +79,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // GET /tipoMedicion/:idMedicion
     // .......................................................
-
     servidorExpress.get('/tipoMedicion/:idMedicion', async function (peticion, respuesta) {
 
         console.log(" * GET /tipoMedicion/:idMedicion ")
@@ -104,7 +100,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // GET /usuario/
     // .......................................................
-
     servidorExpress.get('/usuario/:idUsuario', async function (peticion, respuesta) {
 
         console.log(" * GET /usuario/:idUsuario ")
@@ -126,7 +121,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // POST /usuario
     // .......................................................
-
     servidorExpress.post('/usuario', async function (peticion, respuesta) {
 
         console.log(" * POST /login ")
@@ -149,7 +143,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // PUT /editarUsuario
     // .......................................................
-
     servidorExpress.put('/editarUsuario', async function (peticion, respuesta) {
 
         console.log(" * PUT /editarUsuario ")
@@ -163,7 +156,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     // GET /login/:nombre/:contrasenya
     // .......................................................
-
     servidorExpress.post('/login', async function (peticion, respuesta) {
 
         console.log(" * POST /login ")
@@ -176,4 +168,23 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         if (usuario.length == 1) respuesta.send(JSON.stringify({existe: true, id: usuario[0].id}))
         else respuesta.send(JSON.stringify({existe: false}))
     }) // post /login
+    
+    // .......................................................
+    // GET /recompensas/
+    // .......................................................
+    servidorExpress.get('/recompensas', async function (peticion, respuesta) {
+
+        console.log(" * GET /recompensas ")
+
+        // llamo a la función adecuada de la lógica
+        var res = await laLogica.buscarRecompensas()
+
+        if (res.length == 0) {
+            // 404: not found
+            respuesta.status(404).send("No encontré recompensas")
+            return
+        }
+        // todo ok
+        respuesta.send(JSON.stringify(res))
+    }) // get /recompensas
 } // cargar()
