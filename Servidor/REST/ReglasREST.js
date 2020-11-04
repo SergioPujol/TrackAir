@@ -90,7 +90,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         // averiguo el id
         var id = peticion.params.idMedicion
         // llamo a la función adecuada de la lógica
-        var res = await laLogica.buscarTipoMedidicionConID(id)
+        var res = await laLogica.buscarTipoMedicionConID(id)
         //Si no encuentra el tipo de medicion
         if (res.length != 1) {
             // 404: not found
@@ -173,7 +173,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         var usuario = await laLogica.buscarUsuarioConNombreYContrasenya(datos)
 
         //Si existe el usuario devolvemos true
-        if (usuario.length == 1) respuesta.send(true)
-        else respuesta.send(false)
+        if (usuario.length == 1) respuesta.send(JSON.stringify({existe: true, id: usuario[0].id}))
+        else respuesta.send(JSON.stringify({existe: false}))
     }) // post /login
 } // cargar()

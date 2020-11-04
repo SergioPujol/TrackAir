@@ -256,7 +256,7 @@ module.exports = class Logica {
     // <--
     // {id:Z, descripcion:Texto, limite_max:R}
     // ...............................................................................
-    buscarTipoMedidicionConID(id) {
+    buscarTipoMedicionConID(id) {
 
         var textoSQL = "select * from tipomedida where id= ?";
 
