@@ -20,7 +20,7 @@ h1 {
     margin: -75px 0 0 -75px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top-color: #203504;
+    border-top-color: #1ddba6;
 
     -webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
     animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
@@ -37,7 +37,7 @@ h1 {
         bottom: 5px;
         border-radius: 50%;
         border: 3px solid transparent;
-        border-top-color: #246418;
+        border-top-color: #00f0cc;
 
         -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
         animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
@@ -52,7 +52,7 @@ h1 {
         bottom: 15px;
         border-radius: 50%;
         border: 3px solid transparent;
-        border-top-color: #57ac65;
+        border-top-color: #6bffc3;
 
         -webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
           animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
@@ -88,7 +88,7 @@ h1 {
         top: 0;
         width: 51%;
         height: 100%;
-        background: #222222;
+        background: #577a68;
         z-index: 1000;
         -webkit-transform: translateX(0);  /* Chrome, Opera 15+, Safari 3.1+ */
         -ms-transform: translateX(0);  /* IE 9 */
@@ -138,10 +138,4 @@ h1 {
                 transition: all 0.3s 1s ease-out;
     }
 
-    /* JavaScript Turned Off */
-    /*.no-js #loader-wrapper {
-        display: none;
-    }
-    .no-js h1 {
-        color: #222222;
-    }*/
+ 
