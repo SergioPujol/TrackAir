@@ -3,24 +3,18 @@
 // ------ 21-10-2020
 // -------------------------------------
 
+const servidor = "http://localhost";
+const puerto = 8080;
 class Logica {
   constructor() {}
 
   contadorTest = 0;
-
   //Llama al servidor para recuperar las mediciones de la base de datos
   // Devuelve un objeto con los datos.
   // recuperarMediciones() : {valor, ubicacion, momento}
   async recuperarMediciones() {
-    let res = await axios.get("http://localhost:3333/mediciones");
-
-    let data = res.data;
-    console.log(data);
-    return data;
-  }
-
-  async recuperarMediciones() {
-    let res = await axios.get("http://localhost:3333/mediciones");
+    let recurso = "mediciones";
+    let res = await axios.get(`${servidor}:${puerto}/${recurso}`);
 
     let data = res.data;
     console.log(data);
@@ -30,8 +24,10 @@ class Logica {
   //Postea mediciones fake con un contador para comprobar que funciona el servidor
   //Devuelve un objeto con {guardado:true} o {guardado:false}
   async testPOST() {
+    let recurso = "mediciones";
+
     this.contadorTest++;
-    let res = await axios.post("http://localhost:3333/mediciones", {
+    let res = await axios.post(`${servidor}:${puerto}/${recurso}`, {
       valor: this.contadorTest,
       ubicacion: { lat: 11.44231, lng: 98.92999 },
       momento: Date.now().toString(),
@@ -43,21 +39,22 @@ class Logica {
   }
 
   //Envia un POST para saber si el usuario está en la base de datos
-  // {email: Texto, contrasenya: Texto} -> login() -> VoF
-  async login(correo, contrasenya) {
+  // {email: Texto, contrasenya: Texto} -> login() -> {existe: VoF, id:Z}
+  async login(usuario, contrasenya) {
     //console.log("LOGIN pass: " + CryptoJS.SHA256(contrasenya).toString());
+    let recurso = "login";
+
     try {
-      this.contadorTest++;
-      let res = await axios.post("http://localhost:3333/login", {
-        correo: correo,
+      let res = await axios.post(`${servidor}:${puerto}/${recurso}`, {
+        nombreUsuario: usuario,
         contrasenya: CryptoJS.SHA256(contrasenya).toString(),
       });
 
       let data = res.data;
-      /*console.log("data:");
-      console.log(data);
-      console.log(res.status);
-      return data;*/
+      //console.log("data:");
+      //console.log(data);
+      //console.log(res.status);
+      return data;
       if (res.status != 200) {
         return false;
       } else {
@@ -66,5 +63,10 @@ class Logica {
     } catch (error) {
       return false;
     }
+  }
+
+  //Destruye la cookie que se había creado para el inicio de sesión
+  logout() {
+    document.cookie = "id= ; expires= Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }

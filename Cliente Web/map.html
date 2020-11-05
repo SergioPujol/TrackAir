@@ -10,27 +10,31 @@
       href="https://use.fontawesome.com/releases/v5.15.1/css/all.css"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Montserrat:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="./styles/map.css" />
   </head>
   <body>
     <div class="mapa"></div>
     <div class="modal">
       <div class="tarjeta-login">
-        <i class="cerrar-modal fas fa-times"></i>
+        <div class="cerrar-modal-container">
+
+          <i class="cerrar-modal fas fa-times"></i>
+        </div>
         <div class="tarjeta-login-titulo">
           <h3>Iniciar Sesión</h3>
         </div>
         <div class="tarjeta-login-cuerpo">
-          <form action="">
-            <label for="uname"><b>Correo</b></label>
+          <form action="" autocomplete="off">
+            <label for="uname"><b>Nombre de usuario</b></label>
             <input
-              id="inputCorreo"
-              type="email"
-              placeholder=""
-              name="email"
+              id="inputUsuario"
+              type=""
+              placeholder="Introduzca su nombre de usuario"
+              name="uname"
               required
             />
 
@@ -38,19 +42,19 @@
             <input
               id="inputContrasenya"
               type="password"
-              placeholder=""
+              placeholder="Introduzca su contraseña"
               name="psw"
               required
             />
             <span class="olvide-contrasenya"
-              ><a href="">Olvidé mi contraseña</a></span
+              ><a href="">Olvidó su contraseña?</a></span
             >
-            <span class="error">Usuario y/o contraseña no válidos.</span>
             <button id="btnSubmit" type="submit">INICIAR SESIÓN</button>
 
+            <span class="msg-error">Usuario y/o contraseña no válidos.</span>
             <span class="frase-registro"
-              >Para tener cuenta necesita disponer de un sensor.
-              <a href="./index.html"> Infórmese aquí!</a></span
+              >¿Aún no es miembro de TrackAir?</br>
+              <a href="./#info"> ¡Contáctenos!</a></span
             >
           </form>
         </div>
