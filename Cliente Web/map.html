@@ -19,35 +19,41 @@
     <div class="mapa"></div>
     <div class="modal">
       <div class="tarjeta-login">
-        <h3>Iniciar Sesión</h3>
-        <form action="">
-          <!-- <label for="uname"><b>Username</b></label> -->
-          <input
-            id="inputCorreo"
-            type="email"
-            placeholder="Correo"
-            name="email"
-            required
-          />
+        <i class="cerrar-modal fas fa-times"></i>
+        <div class="tarjeta-login-titulo">
+          <h3>Iniciar Sesión</h3>
+        </div>
+        <div class="tarjeta-login-cuerpo">
+          <form action="">
+            <label for="uname"><b>Correo</b></label>
+            <input
+              id="inputCorreo"
+              type="email"
+              placeholder=""
+              name="email"
+              required
+            />
 
-          <!-- <label for="psw"><b>Password</b></label> -->
-          <input
-            id="inputContrasenya"
-            type="password"
-            placeholder="Contraseña"
-            name="psw"
-            required
-          />
-          <span class="olvide-contrasenya"
-            ><a href="">Olvidé mi contraseña</a></span
-          >
-          <button id="btnSubmit" type="submit">Iniciar Sesión</button>
+            <label for="psw"><b>Contraseña</b></label>
+            <input
+              id="inputContrasenya"
+              type="password"
+              placeholder=""
+              name="psw"
+              required
+            />
+            <span class="olvide-contrasenya"
+              ><a href="">Olvidé mi contraseña</a></span
+            >
+            <span class="error">Usuario y/o contraseña no válidos.</span>
+            <button id="btnSubmit" type="submit">INICIAR SESIÓN</button>
 
-          <span class="frase-registro"
-            >Para tener cuenta necesita disponer de un sensor.
-            <a href="./index.html"> Infórmese aquí!</a></span
-          >
-        </form>
+            <span class="frase-registro"
+              >Para tener cuenta necesita disponer de un sensor.
+              <a href="./index.html"> Infórmese aquí!</a></span
+            >
+          </form>
+        </div>
       </div>
     </div>
     <div class="top-opciones">
