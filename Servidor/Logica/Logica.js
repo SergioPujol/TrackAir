@@ -18,8 +18,8 @@ module.exports = class Logica {
 
         this.laConexion = new mysql.createConnection({
             host: 'localhost',
-            user: 'David',
-            password: '1234',
+            user: 'admin',
+            password: 'admin',
             database: nombreBD
         })
 
