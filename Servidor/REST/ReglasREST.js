@@ -154,7 +154,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     }) // put /editarUsuario   
     
     // .......................................................
-    // GET /login/:nombre/:contrasenya
+    // POST /login/
     // .......................................................
     servidorExpress.post('/login', async function (peticion, respuesta) {
 

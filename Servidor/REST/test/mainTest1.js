@@ -1,11 +1,9 @@
-// ........................................................
-// mainTest1.js
-// ........................................................
-
 var request = require('request')
 var assert = require('assert')
+const { isMainThread } = require('worker_threads')
+const { json } = require('express')
 
-const IP_PUERTO = "http://localhost:8080"
+const IP_PUERTO = "http://192.168.43.245:8080"
 
 describe("Test 1 : Recuerda arrancar el servidor", function () {
     
@@ -29,4 +27,4 @@ describe("Test 1 : Recuerda arrancar el servidor", function () {
             } // callback()
         ) // .get
     }) // it
-}) // describe
+})

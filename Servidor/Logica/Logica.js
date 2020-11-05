@@ -174,7 +174,7 @@ module.exports = class Logica {
     } // ()
 
     // ...............................................................................
-    //datos:{momento:Datetime, ubicacion:Texto, idUsuario:Z}
+    //datos:{momento:Datetime, ubicacion:Texto}
     // -->
     // buscarMedicionConMomentoYUbicacion() <--
     // <--
@@ -182,10 +182,10 @@ module.exports = class Logica {
     // ...............................................................................
     buscarMedicionConMomentoYUbicacion(datos) {
 
-        var textoSQL = "select valor,momento,ubicacion,tipoMedicion from mediciones, medicionesdeusuarios where momento= ? and ubicacion= ? and id_usuario= ?";
+        var textoSQL = "select * from mediciones where momento= ? and ubicacion= ?";
 
         return new Promise((resolver, rechazar) => {
-            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion, datos.idUsuario], (err, res) => {
+            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion], (err, res) => {
                 (err ? rechazar(err) : resolver(res))
             })
         })
