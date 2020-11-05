@@ -123,7 +123,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     servidorExpress.post('/usuario', async function (peticion, respuesta) {
 
-        console.log(" * POST /login ")
+        console.log(" * POST /usuario ")
 
         var datos = JSON.parse(peticion.body)
 

@@ -4,6 +4,7 @@
 
 var request = require('request')
 var assert = require('assert')
+var idUsuario = null;
 
 const IP_PUERTO = "http://localhost:8080"
 
@@ -11,6 +12,29 @@ describe("Test 3: Todos los get", function () {
 
     it("probar GET /mediciones", function (hecho) {
 
+        var datosUsuario = {
+
+            nombreUsuario: "admin",
+            contrasenya: "ContraseñaHasheada",
+        }
+
+        request.post({
+
+                url: IP_PUERTO + "/login",
+                headers: {
+
+                    'User-Agent': 'David',
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(datosUsuario)
+            },
+
+            function (err, respuesta, carga) {
+
+                idUsuario = JSON.parse(carga).id
+            })
+        
         request.get({
 
                 url: IP_PUERTO + "/mediciones",
@@ -21,14 +45,13 @@ describe("Test 3: Todos los get", function () {
             },
 
             function (err, respuesta, carga) {
-
                 assert.equal(err, null, "¿ha habido un error?")
                 assert.equal(respuesta.statusCode, 200, "¿El código no es 200 (OK)")
 
                 var solucion = JSON.parse(carga)
 
                 assert.equal(solucion[0].valor, 12345, "¿El valor no es 12345?")
-                assert.equal(solucion[0].momento, "2018-10-22 05:00:00", "¿El momento no es 2018-10-22 05:00:00?")
+                assert.equal(solucion[0].momento, "2018-10-22T03:00:00.000Z", "¿El momento no es 2018-10-22T03:00:00.000Z?")
                 assert.equal(solucion[0].ubicacion, "98.92999, 45", "¿La ubicación no es 98.92999, 45?")
                 assert.equal(solucion[0].tipoMedicion, "CO2", "¿El tipo de medición no es CO2?")
 
@@ -41,7 +64,7 @@ describe("Test 3: Todos los get", function () {
 
         request.get({
 
-                url: IP_PUERTO + "/mediciones/1",
+                url: IP_PUERTO + "/mediciones/" + idUsuario,
                 headers: {
 
                     'User-Agent': 'David'
@@ -96,7 +119,7 @@ describe("Test 3: Todos los get", function () {
 
         request.get({
 
-                url: IP_PUERTO + "/usuario/1",
+                url: IP_PUERTO + "/usuario/" + idUsuario,
                 headers: {
 
                     'User-Agent': 'David'
@@ -110,7 +133,7 @@ describe("Test 3: Todos los get", function () {
 
                 var solucion = JSON.parse(carga)
 
-                assert.equal(solucion.id, 1, "¿El id no es 1?")
+                assert.equal(solucion.id, idUsuario, "¿El id no es " + idUsuario + "?")
                 assert.equal(solucion.nombre_usuario, "admin", "¿El nombre de usuario no es admin?")
                 assert.equal(solucion.contrasenya, "ContraseñaHasheada", "¿La contraseña no es ContraseñaHasheada?")
                 assert.equal(solucion.correo, "micorreo@gmail.com", "¿La contraseña no es micorreo@gmail.com?")

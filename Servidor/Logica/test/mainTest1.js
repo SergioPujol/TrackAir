@@ -12,6 +12,7 @@ var assert = require("assert")
 describe("Test 1: Usuario", function () {
 
     var laLogica = null
+    var idUsuario = null
 
     it("conectar a la base de datos", function (hecho) {
 
@@ -34,37 +35,39 @@ describe("Test 1: Usuario", function () {
     it("puedo insertar un usuario", async function () {
 
         await laLogica.insertarUsuario({
-
-            nombrUsuario: "admin",
+            nombreUsuario: "admin",
             contrasenya: "ContraseñaHasheada",
             correo: "micorreo@gmail.com",
             puntuacion: 200
         })
 
         var res = await laLogica.buscarUsuarioConNombreYContrasenya({
-            nombrUsuario: "admin",
-            contrasenya: "ContraseñaHashada"
+            nombreUsuario: "admin",
+            contrasenya: "ContraseñaHasheada"
         })
-        assert.equal(res.length, 0, "¿no hay un resultado?")
-        assert.equal(res[0].nombre_usuario.toString(), "admin", "¿no es ese nombre?") 
-        assert.equal(res[0].contrasenya.toString(), "ContraseñaHasheada", "¿no es esa contraseña?") 
-        assert.equal(res[0].correo.toString(), "micorreo@gmail.com", "¿no es ese correo?") 
-        assert.equal(res[0].puntuacion.toString(), "200", "¿no es esa puntuación?") 
+
+        idUsuario = res[0].id
+
+        assert.equal(res.length, 1, "¿no hay un resultado?")
+        assert.equal(res[0].nombre_usuario.toString(), "admin", "¿no es ese nombre?")
+        assert.equal(res[0].contrasenya.toString(), "ContraseñaHasheada", "¿no es esa contraseña?")
+        assert.equal(res[0].correo.toString(), "micorreo@gmail.com", "¿no es ese correo?")
+        assert.equal(res[0].puntuacion.toString(), "200", "¿no es esa puntuación?")
     }) // it
-    
+
     it("puedo editar un usuario", async function () {
 
         await laLogica.editarUsuario({
-            
-            id: 1,
+
+            id: idUsuario,
             nombreUsuario: "David",
             contrasenya: "ContraseñaHasheada",
             correo: "micorreo@gmail.com",
             puntuacion: 200
         })
 
-        var res = await laLogica.buscarUsuarioConID(1)
-        assert.equal(res.length, 0, "No lo ha conseguido insertar") 
+        var res = await laLogica.buscarUsuarioConId(idUsuario)
+        assert.equal(res.length, 1, "No lo ha conseguido insertar")
     }) // it
 
     it("cerrar conexión a la base de datos", async function () {

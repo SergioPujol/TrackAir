@@ -9,12 +9,13 @@ const IP_PUERTO = "http://localhost:8080"
 
 describe("Test 2: Todos los post", function () {
 
+    var idUsuario = null
+
     it("probar POST /usuario", function (hecho) {
 
         var datosUsuario = {
 
-            id: 1,
-            nombre_usuario: "admin",
+            nombreUsuario: "admin",
             contrasenya: "ContraseñaHasheada",
             correo: "micorreo@gmail.com",
             puntuacion: 200
@@ -22,7 +23,46 @@ describe("Test 2: Todos los post", function () {
 
         request.post({
 
-                url: IP_PUERTO + "/asignatura",
+                url: IP_PUERTO + "/usuario",
+                headers: {
+
+                    'User-Agent': 'David',
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(datosUsuario)
+            },
+
+            function (err, respuesta, carga) {
+
+                idUsuario = JSON.parse(carga).id
+                res = JSON.stringify({
+
+                    id: idUsuario,
+                    nombre_usuario: "admin",
+                    contrasenya: "ContraseñaHasheada",
+                    correo: "micorreo@gmail.com",
+                    puntuacion: 200
+                })
+                assert.equal(err, null, "¿ha habido un error?")
+                assert.equal(respuesta.statusCode, 200, "¿El código no es 200 (OK)")
+                assert.equal(carga, res, "¿La carga no es " + res)
+                hecho()
+            } // callback
+        ) // .post
+    }) // it
+
+    it("probar POST /login", function (hecho) {
+
+        var datosUsuario = {
+
+            nombreUsuario: "admin",
+            contrasenya: "ContraseñaHasheada",
+        }
+
+        request.post({
+
+                url: IP_PUERTO + "/login",
                 headers: {
 
                     'User-Agent': 'David',
@@ -36,11 +76,8 @@ describe("Test 2: Todos los post", function () {
 
                 res = JSON.stringify({
 
-                    id: 1,
-                    nombre_usuario: "admin",
-                    contrasenya: "ContraseñaHasheada",
-                    correo: "micorreo@gmail.com",
-                    puntuacion: 200
+                    existe: true,
+                    id: idUsuario
                 })
                 assert.equal(err, null, "¿ha habido un error?")
                 assert.equal(respuesta.statusCode, 200, "¿El código no es 200 (OK)")
@@ -58,7 +95,7 @@ describe("Test 2: Todos los post", function () {
             momento: "2018-10-22 05:00:00",
             ubicacion: "98.92999, 45",
             tipoMedicion: "CO2",
-            idUsuario: 1
+            idUsuario: idUsuario
         }
 
         request.post({
