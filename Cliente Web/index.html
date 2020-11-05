@@ -26,7 +26,6 @@
         width: 550px;
         padding: 10px 10px 10px 10px;
     }
-
 </style>
 
 <body onload="rellenarListas()">
@@ -49,7 +48,7 @@
 
     </div>
 
-   
+
 
     <script>
 
@@ -65,23 +64,73 @@
 
             fetch(IP_PUERTO + "obtenerMediciones", {
 
-                    headers: {
+                headers: {
 
-                        'User-Agent': 'SergioPujol'
-                    }
-                })
+                    'User-Agent': 'SergioPujol'
+                }
+            })
                 .then(res => res.json())
-                .then(function(res) {
+                .then(function (res) {
 
                     for (var i = 0; i < res.length; i++) {
 
                         document.getElementById("mediciones").innerHTML += "<tr><td>" + res[i].momento + "</td><td>" + res[i].ubicacion + "</td><td>" + res[i].valor + "</td></tr>"
                     }
                 })
-            }
-        
+        }
 
-        
+        async function obtenerMedicionesCSV() {
+
+            var acceso;
+            acceso = "medicionesOficialesCSV";
+
+            const options = {
+                method: "GET",
+                mode: 'cors',
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': "*"
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            };
+
+            // Petición HTTP
+            fetch("http://localhost:8080/" + acceso, options)
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                });
+        }
+
+        async function obtenerMedicionesAPIOficial() {
+
+            var acceso;
+            acceso = "medicionesOficiales";
+
+            const options = {
+                method: "GET",
+                mode: 'cors',
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': "*"
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            };
+
+            // Petición HTTP
+            fetch("http://localhost:8080/" + acceso, options)
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                });
+        }
+
+
+
     </script>
 </body>
 

@@ -31,7 +31,7 @@ function cargarLogica(fichero) {
 
 async function main() {
     
-    var laLogica = await cargarLogica("p3a")
+    var laLogica = await cargarLogica("proyecto3a")
     
     // creo el servidor
     var servidorExpress = express()
@@ -46,15 +46,14 @@ async function main() {
     
     // arranco el servidor
     var servicio = servidorExpress.listen(8080, function () {
-        
         console.log("servidor REST escuchando en el puerto 8080 ")
     })
     
     // capturo control-c para cerrar el servicio ordenadamente
     process.on('SIGINT', function () {
-        
         console.log(" terminando ")
         servicio.close()
+        process.exit(1);
     })
 } // ()
 

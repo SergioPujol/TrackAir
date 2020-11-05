@@ -18,8 +18,8 @@ module.exports = class Logica {
 
         this.laConexion = new mysql.createConnection({
             host: 'localhost',
-            user: 'David',
-            password: '1234',
+            user: 'admin',
+            password: 'admin',
             database: nombreBD
         })
 
@@ -53,8 +53,8 @@ module.exports = class Logica {
     async borrarFilasDeTodasLasTablas() {
 
         await this.borrarFilasDe("codigosrecompensas")
-        await this.borrarFilasDe("tipomedidas")
         await this.borrarFilasDe("mediciones")
+        await this.borrarFilasDe("tipomedida")
         await this.borrarFilasDe("usuarios")
         await this.borrarFilasDe("medicionesdeusuarios")
         await this.borrarFilasDe("recompensas")
@@ -95,7 +95,7 @@ module.exports = class Logica {
             })
         })
     }
-    
+
     // ...............................................................................
     //id:Z
     // -->
@@ -113,14 +113,14 @@ module.exports = class Logica {
             })
         })
     }
-    
+
     // ...............................................................................
     // datos:{id=Z, nombreUsuario:Texto, contrasenya=Texto, correo=Texto, puntuacion=Texto}
     // -->
     // editarUsuario() -->
     // ...............................................................................
     editarUsuario(datos) {
-        
+
         var textoSQL = 'update usuarios set nombre_usuario= ?, contrasenya= ?, correo= ?, puntuacion=? where id=  ?;'
 
         return new Promise((resolver, rechazar) => {
@@ -174,7 +174,7 @@ module.exports = class Logica {
     } // ()
 
     // ...............................................................................
-    //datos:{momento:Datetime, ubicacion:Texto, idUsuario:Z}
+    //datos:{momento:Datetime, ubicacion:Texto}
     // -->
     // buscarMedicionConMomentoYUbicacion() <--
     // <--
@@ -182,10 +182,10 @@ module.exports = class Logica {
     // ...............................................................................
     buscarMedicionConMomentoYUbicacion(datos) {
 
-        var textoSQL = "select valor,momento,ubicacion,tipoMedicion from mediciones, medicionesdeusuarios where momento= ? and ubicacion= ? and id_usuario= ?";
+        var textoSQL = "select * from mediciones where momento= ? and ubicacion= ?";
 
         return new Promise((resolver, rechazar) => {
-            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion, datos.idUsuario], (err, res) => {
+            this.laConexion.query(textoSQL, [datos.momento, datos.ubicacion], (err, res) => {
                 (err ? rechazar(err) : resolver(res))
             })
         })
@@ -202,19 +202,19 @@ module.exports = class Logica {
 
         var ubicacionesYMomentos = await this.buscarUbicacionYMomentoDeUsuario(id);
 
-        var res= [];
+        var res = [];
         for (var i = 0; i < ubicacionesYMomentos.length; i++) {
-            
-            var datos= {
+
+            var datos = {
                 momento: ubicacionesYMomentos[i].momento_medicion,
                 ubicacion: ubicacionesYMomentos[i].ubicacion_medicion,
                 idUsuario: ubicacionesYMomentos[i].id_usuario,
-            }            
+            }
             res.push(await this.buscarMedicionConMomentoYUbicacion(datos))
         }
         return res
     }
-    
+
     // ...............................................................................
     //idUsuario:Z
     // -->
@@ -272,8 +272,8 @@ module.exports = class Logica {
     // <--
     // Lista {id:Texto, titulo:Texto, descripcion:Texto, coste:Z}
     // ...............................................................................
-    buscarRecompensas(){
-        
+    buscarRecompensas() {
+
         var textoSQL = "select * from recompensas";
 
         return new Promise((resolver, rechazar) => {

@@ -4,6 +4,7 @@
 
 module.exports.cargar = function (servidorExpress, laLogica) {
 
+    var csv = require('../Datos/MedicionesOficiales.json'); // your json file path
     // .......................................................
     // GET /prueba
     // .......................................................
@@ -123,7 +124,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     // .......................................................
     servidorExpress.post('/usuario', async function (peticion, respuesta) {
 
-        console.log(" * POST /login ")
+        console.log(" * POST /usuario ")
 
         var datos = JSON.parse(peticion.body)
 
@@ -154,7 +155,7 @@ module.exports.cargar = function (servidorExpress, laLogica) {
     }) // put /editarUsuario   
     
     // .......................................................
-    // GET /login/:nombre/:contrasenya
+    // POST /login/
     // .......................................................
     servidorExpress.post('/login', async function (peticion, respuesta) {
 
@@ -187,4 +188,54 @@ module.exports.cargar = function (servidorExpress, laLogica) {
         // todo ok
         respuesta.send(JSON.stringify(res))
     }) // get /recompensas
+
+
+    // .......................................................
+    // GET /mediciones oficiales off line
+    // .......................................................
+    servidorExpress.get('/medicionesOficialesCSV',
+        async function (peticion, respuesta) {
+            
+                // Do something with your data
+                respuesta.send(csv);
+
+        }) // get /mediciones
+
+    
+    // .......................................................
+    // GET /mediciones oficiales en línea
+    // .......................................................
+    servidorExpress.get('/medicionesOficiales',
+        async function (peticion, respuesta) {
+            const fetch = require("node-fetch");
+            console.log(" * GET /mediciones oficiales")
+
+            const options = {
+                method: "POST",
+                mode: 'cors',
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': "*"
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            };
+
+            // Petición HTTP
+            fetch("https://webcat-web.gva.es/webcat_web/datosOnlineRvvcca/obtenerTablaPestanyaDatosOnline", options)
+                .then(response => response.text())
+                .then(data => {
+        
+                    if (data.length == 0) {
+                        // 404: not found
+                        respuesta.status(404).send("{}")
+                        return
+                    }
+                    // todo ok
+                    respuesta.send(data)
+                                    
+                });
+        }) // get /mediciones
+
 } // cargar()
