@@ -50,20 +50,6 @@ public class ReceptorBluetooth {
 
     }
 
-    /*private int extraerMedicion(TramaIBeacon tib) {
-
-        int medicion = 0;
-
-        if(!comprobarBeaconRepetido(tib)) {
-            medicion = Utilidades.bytesToInt(tib.getMajor());
-            contador = tib.getContador();
-            return medicion;
-        } else {
-            return -1111111; //La función no devuelve ningún valor válido porque es la misma medida que la anterior
-        }
-
-    }*/
-
     private boolean comprobarBeaconRepetido(TramaIBeacon tib) {
 
         if(tib.getContador() == contador){ //Si contador del nuevo trama es igual al contador de anterior medida se devuelve falso
@@ -235,6 +221,5 @@ public class ReceptorBluetooth {
             return (0.89976)*Math.pow(ratio,7.7095) + 0.111;
         }*/
     }
-
 
 }
