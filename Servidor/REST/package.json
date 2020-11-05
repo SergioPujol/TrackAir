@@ -1,0 +1,25 @@
+{
+  "//": "npm run test",
+  "name": "servidorrest",
+  "description": "2020",
+  "license": "LGPL-3.0",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "no hay"
+  },
+  "scripts": {
+    "servidor": "node mainServidorREST.js",
+    "test": "node ./node_modules/mocha/bin/mocha"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "*",
+    "request": "*"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.0"
+  },
+  "main": "ReglasREST.js",
+  "author": "David Jimenez Garcia"
+}
