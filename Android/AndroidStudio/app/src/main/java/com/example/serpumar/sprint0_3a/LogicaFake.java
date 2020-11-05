@@ -83,6 +83,7 @@ public class LogicaFake {
                     int i;
                     JSONArray array = new JSONArray(jsonString);
                     json= array.getJSONObject(array.length()-1);
+                    //Medicion medicion = new Medicion(json.,json );
                 } catch (JSONException e) {
                     Log.d("Error Json",e.getMessage());
                 }
