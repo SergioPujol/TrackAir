@@ -12,6 +12,6 @@
         "mysql": "^2.18.1"
     },
     "devDependencies": {
-        "mocha": "*"
+        "mocha": "^8.2.1"
     }
 }

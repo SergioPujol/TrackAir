@@ -79,7 +79,7 @@ describe("Test 3: Todos los get", function () {
                 var solucion = JSON.parse(carga)
 
                 assert.equal(solucion[0].valor, 12345, "¿El valor no es 12345?")
-                assert.equal(solucion[0].momento, "2018-10-22 05:00:00", "¿El momento no es 2018-10-22 05:00:00?")
+                assert.equal(solucion[0].momento, "2018-10-22T03:00:00.000Z", "¿El momento no es 2018-10-22T03:00:00.000Z?")
                 assert.equal(solucion[0].ubicacion, "98.92999, 45", "¿La ubicación no es 98.92999, 45?")
                 assert.equal(solucion[0].tipoMedicion, "CO2", "¿El tipo de medición no es CO2?")
 
