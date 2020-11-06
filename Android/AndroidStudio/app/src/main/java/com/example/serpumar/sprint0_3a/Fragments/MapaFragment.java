@@ -26,6 +26,7 @@ public class MapaFragment extends Fragment {
     private ReceptorBluetooth receptorBluetooth = new ReceptorBluetooth();
 
     private GPS gps = new GPS();
+    public LogicaFake lf;
 
     public MapaFragment() {
         // Required empty public constructor
@@ -39,6 +40,8 @@ public class MapaFragment extends Fragment {
 
         receptorBluetooth.setContext(getContext());
 
+        lf = new LogicaFake(this.getContext());
+
         Button obtenerLectura = (Button) view.findViewById(R.id.botonObtenerLectura);
         obtenerLectura.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +49,18 @@ public class MapaFragment extends Fragment {
                 Log.d(ETIQUETA_LOG, " boton obtenerMediciones" );
                 receptorBluetooth.buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
                 }
+        });
+
+        Button subirLectura = (Button) view.findViewById(R.id.botonSubirLectura);
+        subirLectura.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(ETIQUETA_LOG, " boton obtenerMediciones" );
+                if(receptorBluetooth.getUltimaMedicion() != null)
+                    lf.guardarMedicion(receptorBluetooth.getUltimaMedicion());
+                else
+                    Toast.makeText(getContext(), "Primero debes tomar una lectura", Toast.LENGTH_SHORT).show();
+            }
         });
 
         Button obtenerMediciones = (Button) view.findViewById(R.id.botonObtenerMediciones);

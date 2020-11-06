@@ -63,7 +63,7 @@ public class ReceptorBluetooth {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = dateFormat.format(Calendar.getInstance().getTime().getTime());
 
-            ultimaMedicion = new Medicion(medicion, ub, date, "SO2");
+            ultimaMedicion = new Medicion(medicion, ub, date, "CO2");
 
             EditText cajaLectura = (EditText) ((Activity) context).findViewById(R.id.cajaSensor);
             cajaLectura.setText(getUltimaMedicion().getMedicion() + " ug/m3 - " + getUltimaMedicion().getDate() + " - " + getUltimaMedicion().getUbicacion().getLatitud() + ", " + getUltimaMedicion().getUbicacion().getLongitud());
@@ -159,13 +159,14 @@ public class ReceptorBluetooth {
 
                 TramaIBeacon tib = new TramaIBeacon(bytes);
                 String uuidString = Utilidades.bytesToString(tib.getUUID());
+                Log.d(ETIQUETA_LOG, " * UUID buscando >");
 
                 if (uuidString.compareTo(Utilidades.uuidToString(dispositivoBuscado)) == 0) {
                     detenerBusquedaDispositivosBTLE();
                     mostrarInformacionDispositivoBTLE(bluetoothDevice, rssi, bytes);
                     haLlegadoUnBeacon(tib);
                 } else {
-                    //Log.d(ETIQUETA_LOG, " * UUID buscado >" + Utilidades.uuidToString(dispositivoBuscado) + "< no concuerda con este uuid = >" + uuidString + "<");
+                //    Log.d(ETIQUETA_LOG, " * UUID buscado >" + Utilidades.uuidToString(dispositivoBuscado) + "< no concuerda con este uuid = >" + uuidString + "<");
                 }
 
 
@@ -323,12 +324,13 @@ public class ReceptorBluetooth {
 
 
     public void detenerAvisador() {
+        if(avisador != null){
         isRunning = false;
         avisador.interrupt();
         avisador = null;
         Toast.makeText(context, "¡Avisador detenido!", Toast.LENGTH_SHORT).show();
         TextView txtview = ((Activity) context).findViewById(R.id.textView_Activador);
-        txtview.setText("Avisador detenido");
+        txtview.setText("Avisador detenido");}
     }
 
     private class Avisador implements Runnable {
@@ -366,7 +368,7 @@ public class ReceptorBluetooth {
                                 time = new Date().getTime();
                                 setCallback();
                                 if(ultimaMedicion!=null)
-                                    lf.guardarMedicion(ultimaMedicion, context);
+                                    lf.guardarMedicion(ultimaMedicion);
                             }
                             break;
                         default:

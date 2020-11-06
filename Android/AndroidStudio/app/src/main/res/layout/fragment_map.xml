@@ -31,11 +31,26 @@
                 android:textSize="36sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/botonObtenerLectura"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Obtener lectura" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/botonObtenerLectura"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Obtener lectura" />
+
+                <Button
+                    android:id="@+id/botonSubirLectura"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Subir lectura" />
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/cajaSensor"
