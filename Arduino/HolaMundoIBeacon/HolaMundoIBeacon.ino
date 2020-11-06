@@ -65,7 +65,7 @@ void inicializarPlaquita () { } // ()
 // --------------------------------------------------------------
 void setup() {
 
-  Globales::elPuerto.esperarDisponible();
+  //Globales::elPuerto.esperarDisponible();
 
   // 
   // 
@@ -92,7 +92,8 @@ void setup() {
   // 
   
   Globales::elPuerto.escribir( "---- Calibrando medidor ---- \n " );
-  esperar( 20000 );
+  Globales::elMedidor.medirIrritante();
+  esperar( 10000 );
   Globales::elMedidor.configurarMedidor('Z'); // Calibramos a 0 el sensor despues de unas tomas.
   
 
