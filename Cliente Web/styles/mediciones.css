@@ -3,6 +3,8 @@
   margin: 0;
   color: #333;
   font-family: "Commissioner", sans-serif;
+  text-decoration: none;
+  outline: 0;
 }
 
 header {
@@ -33,13 +35,14 @@ header {
   border-bottom: 1px solid #bbb;
   margin: 5px 0;
   padding: 8px 0;
+  justify-content: center;
 }
 
-.row:hover {
+/*.row:hover {
   background-color: #04adbf;
   color: white;
   font-size: 1.33rem;
-}
+}*/
 .top-row {
   display: flex;
   flex-direction: row;
@@ -60,4 +63,8 @@ header {
 }
 #btn-container {
   width: 90%;
+}
+
+.container{
+    width: 80%;
 }

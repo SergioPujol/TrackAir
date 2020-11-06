@@ -87,11 +87,11 @@ function testPOST() {
 // Grafico ejemplo
 var ctx = document.getElementById('myChart');
 var myChart = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ['20 nov', '21 nov', '22 nov', '23 nov', '24 nov', '25 nov'],
         datasets: [{
-            label: '# of Votes',
+            label: 'NO2',
             data: [12, 19, 3, 5, 2, 3],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -109,17 +109,19 @@ var myChart = new Chart(ctx, {
                 'rgba(153, 102, 255, 1)',
                 'rgba(255, 159, 64, 1)'
             ],
-            borderWidth: 1
+            borderWidth: 3
         }]
     },
     options: {
         scales: {
+            
             yAxes: [{
                 ticks: {
                     beginAtZero: true
                 }
             }]
         }
+        
     }
 });
 //show hide divs
