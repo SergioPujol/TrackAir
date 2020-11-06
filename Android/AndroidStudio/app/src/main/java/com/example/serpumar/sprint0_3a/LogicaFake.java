@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,7 +32,7 @@ public class LogicaFake {
 
     private JSONObject json;
 
-    private String url = "http://192.168.43.245:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
+    private String url = "http://igmagi.upv.edu.es"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
 
     private Activity Activitycontext_;
 
@@ -65,12 +66,10 @@ public class LogicaFake {
 
     }
 
-    public void obtenerMedicion(Context context) { //Obtener Medicion de la base de datos (GET)
-
+    public void obtenerMedicion(final Context context) { //Obtener Medicion de la base de datos (GET)
         RequestQueue queue = Volley.newRequestQueue(context);
         Activitycontext_ = (Activity) context;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/obtenerMediciones", new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/mediciones", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("Response", response);
@@ -84,7 +83,7 @@ public class LogicaFake {
                 } catch (JSONException e) {
                     Log.d("Error Json",e.getMessage());
                 }
-                TextView textoValores = (TextView)Activitycontext_.findViewById(R.id.textView_Activador);
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
                 textoValores.setText(json.toString());
 
 
@@ -97,15 +96,73 @@ public class LogicaFake {
         }
 
         );
-
-        /*stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                5000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
-
         queue.add(stringRequest);
+    }
+
+    public void obtenerMedicionesOficialesAPI(final Context context) { //Obtener Medicion de la base de datos (GET)
+        RequestQueue queue = Volley.newRequestQueue(context);
+        Activitycontext_ = (Activity) context;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/medicionesOficiales", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Response", response);
+                jsonString = response;
+                List<JSONObject> list = new ArrayList<JSONObject>();
+                try {
+                    int i;
+                    JSONArray array = new JSONArray(jsonString);
+                    json= array.getJSONObject(array.length()-1);
+                    //Medicion medicion = new Medicion(json.,json );
+                } catch (JSONException e) {
+                    Log.d("Error Json",e.getMessage());
+                }
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
+                textoValores.setText(json.toString());
 
 
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        queue.add(stringRequest);
+    }
+
+    public void obtenerMedicionesOficialesLOCAL(final Context context) { //Obtener Medicion de la base de datos (GET)
+        RequestQueue queue = Volley.newRequestQueue(context);
+        Activitycontext_ = (Activity) context;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/medicionesOficialesCSV", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Response", response);
+                jsonString = response;
+                List<JSONObject> list = new ArrayList<JSONObject>();
+                try {
+                    int i;
+                    JSONArray array = new JSONArray(jsonString);
+                    json= array.getJSONObject(array.length()-1);
+                    //Medicion medicion = new Medicion(json.,json );
+                } catch (JSONException e) {
+                    Log.d("Error Json",e.getMessage());
+                }
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
+                textoValores.setText(json.toString());
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        queue.add(stringRequest);
     }
 
     public void guardarMedicion(Medicion ultimaMedicion, Context context) {
@@ -115,11 +172,12 @@ public class LogicaFake {
         parametros.put("ubicacion", ultimaMedicion.getUbicacion().getLatitud() + "," + ultimaMedicion.getUbicacion().getLongitud());
         parametros.put("momento", ultimaMedicion.getDate());
         parametros.put("tipoMedicion", "O3");
+        parametros.put("idUsuario", -1+"");
 
         JSONObject jsonParametros = new JSONObject(parametros);
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        JsonRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url + "/insertarMedicion", jsonParametros, new Response.Listener<JSONObject>() {
+        JsonRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url + "/medicion", jsonParametros, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("Response", "medicion guardada en base de datos");

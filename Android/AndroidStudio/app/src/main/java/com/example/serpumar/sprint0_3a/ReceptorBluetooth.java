@@ -1,6 +1,7 @@
 package com.example.serpumar.sprint0_3a;
 
 import android.app.Activity;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
@@ -9,6 +10,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +28,7 @@ public class ReceptorBluetooth {
 
     LogicaFake lf = new LogicaFake();
 
-    private BluetoothAdapter.LeScanCallback  callbackLeScan = null;
+    private BluetoothAdapter.LeScanCallback callbackLeScan = null;
 
     private ScanCallback scanCallback = null; // for api >= 21
 
@@ -54,14 +56,17 @@ public class ReceptorBluetooth {
 
         Log.d("Contador", "Trama Contador: " + tib.getContador() + " / Contador Guardado: " + contador);
 
-        if(comprobarBeaconRepetido(tib)) {
+        if (comprobarBeaconRepetido(tib)) {
             int medicion = Utilidades.bytesToInt(tib.getMinor());
             Ubicacion ub = gps.obtenerUbicacion(context);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = dateFormat.format(Calendar.getInstance().getTime().getTime());
 
             ultimaMedicion = new Medicion(medicion, ub, date);
-            lf.guardarMedicion(medicion, ub, date, context); //Le paso como variable el contexto para poder cambiar el texto en la pantalla del MainActivity
+
+            EditText cajaLectura = (EditText) ((Activity) context).findViewById(R.id.cajaSensor);
+            cajaLectura.setText(getUltimaMedicion().getMedicion() + " ug/m3 - " + getUltimaMedicion().getDate() + " - " + getUltimaMedicion().getUbicacion().getLatitud() + ", " + getUltimaMedicion().getUbicacion().getLongitud());
+            //lf.guardarMedicion(medicion, ub, date, context); //Le paso como variable el contexto para poder cambiar el texto en la pantalla del MainActivity
         } else {
             Log.d("Medicion", "La medicion ya se ha tomado");
         }
@@ -71,7 +76,7 @@ public class ReceptorBluetooth {
 
     private boolean comprobarBeaconRepetido(TramaIBeacon tib) {
 
-        if(tib.getContador() == contador){ //Si contador del nuevo trama es igual al contador de anterior medida se devuelve falso
+        if (tib.getContador() == contador) { //Si contador del nuevo trama es igual al contador de anterior medida se devuelve falso
             return false;
         } else {
             contador = tib.getContador();
@@ -79,7 +84,6 @@ public class ReceptorBluetooth {
         }
 
     }
-
 
     public void buscarTodosLosDispositivosBTLE() {
         callbackLeScan = new BluetoothAdapter.LeScanCallback() {
@@ -89,7 +93,7 @@ public class ReceptorBluetooth {
                 //
                 //  se ha encontrado un dispositivo
                 //
-                mostrarInformacionDispositivoBTLE( bluetoothDevice, rssi, bytes );
+                mostrarInformacionDispositivoBTLE(bluetoothDevice, rssi, bytes);
 
             } // onLeScan()
         }; // new LeScanCallback
@@ -97,9 +101,9 @@ public class ReceptorBluetooth {
         //
         //
         //
-        boolean resultado = BluetoothAdapter.getDefaultAdapter().startLeScan( callbackLeScan );
+        boolean resultado = BluetoothAdapter.getDefaultAdapter().startLeScan(callbackLeScan);
 
-        Log.d(ETIQUETA_LOG, " buscarTodosLosDispositivosBTL(): startLeScan(), resultado= " + resultado );
+        Log.d(ETIQUETA_LOG, " buscarTodosLosDispositivosBTL(): startLeScan(), resultado= " + resultado);
     } // ()
 
 
@@ -116,7 +120,7 @@ public class ReceptorBluetooth {
                 TramaIBeacon tib = new TramaIBeacon(data);
                 String strUUIDEncontrado = Utilidades.bytesToString(tib.getUUID());
                 Log.d(ETIQUETA_LOG, "API >= 21 - UUID dispositivo encontrado!!!!: " + tib.getUUID().toString());
-                if (strUUIDEncontrado.compareTo(Utilidades.uuidToString(dispositivoBuscado))==0) {
+                if (strUUIDEncontrado.compareTo(Utilidades.uuidToString(dispositivoBuscado)) == 0) {
                     Log.d("Encontrado", "Dispositivo Encontrado");
                     // Detenemos la búsqueda de dispositivos
                     detenerBusquedaDispositivosBTLE();
@@ -141,10 +145,9 @@ public class ReceptorBluetooth {
         BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner().startScan(this.scanCallback);
     } // ()
 
-
     //obtenerMedicionEsteDispositivo()
 
-    public void buscarEsteDispositivoBTLEYObtenerMedicion(final UUID dispositivoBuscado ) {
+    public void buscarEsteDispositivoBTLEYObtenerMedicion(final UUID dispositivoBuscado) {
         callbackLeScan = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice bluetoothDevice, int rssi, byte[] bytes) {
@@ -153,15 +156,15 @@ public class ReceptorBluetooth {
                 // dispostivo encontrado
                 //
 
-                TramaIBeacon tib = new TramaIBeacon( bytes );
-                String uuidString =  Utilidades.bytesToString( tib.getUUID() );
+                TramaIBeacon tib = new TramaIBeacon(bytes);
+                String uuidString = Utilidades.bytesToString(tib.getUUID());
 
-                if ( uuidString.compareTo( Utilidades.uuidToString( dispositivoBuscado ) ) == 0 )  {
+                if (uuidString.compareTo(Utilidades.uuidToString(dispositivoBuscado)) == 0) {
                     detenerBusquedaDispositivosBTLE();
-                    mostrarInformacionDispositivoBTLE( bluetoothDevice, rssi, bytes );
+                    mostrarInformacionDispositivoBTLE(bluetoothDevice, rssi, bytes);
                     haLlegadoUnBeacon(tib);
                 } else {
-                    Log.d( ETIQUETA_LOG, " * UUID buscado >" + Utilidades.uuidToString( dispositivoBuscado ) + "< no concuerda con este uuid = >" + uuidString + "<");
+                    //Log.d(ETIQUETA_LOG, " * UUID buscado >" + Utilidades.uuidToString(dispositivoBuscado) + "< no concuerda con este uuid = >" + uuidString + "<");
                 }
 
 
@@ -171,30 +174,58 @@ public class ReceptorBluetooth {
         //
         //
         //
-        BluetoothAdapter.getDefaultAdapter().startLeScan( callbackLeScan );
+        BluetoothAdapter.getDefaultAdapter().startLeScan(callbackLeScan);
     } // ()
 
 
-    public void detenerBusquedaDispositivosBTLE() {
-        if ( callbackLeScan == null ) {
-            return;
-        }
+    public void buscarEsteDispositivoBTLEYObtenerMedicion(final UUID dispositivoBuscado, final Context context) {
+        callbackLeScan = new BluetoothAdapter.LeScanCallback() {
+            @Override
+            public void onLeScan(BluetoothDevice bluetoothDevice, int rssi, byte[] bytes) {
+
+                //
+                // dispostivo encontrado
+                //
+
+                TramaIBeacon tib = new TramaIBeacon(bytes);
+                String uuidString = Utilidades.bytesToString(tib.getUUID());
+
+                if (uuidString.compareTo(Utilidades.uuidToString(dispositivoBuscado)) == 0) {
+                    detenerBusquedaDispositivosBTLE();
+                    mostrarInformacionDispositivoBTLE(bluetoothDevice, rssi, bytes);
+                    haLlegadoUnBeacon(tib);
+
+                } else {
+                    Log.d(ETIQUETA_LOG, " * UUID buscado >" + Utilidades.uuidToString(dispositivoBuscado) + "< no concuerda con este uuid = >" + uuidString + "<");
+                }
+
+
+            } // onLeScan()
+        }; // new LeScanCallback
 
         //
         //
         //
+        BluetoothAdapter.getDefaultAdapter().startLeScan(callbackLeScan);
+    } // ()
+
+    public void detenerBusquedaDispositivosBTLE() {
+        if (callbackLeScan == null) {
+            return;
+        }
+
         BluetoothAdapter.getDefaultAdapter().stopLeScan(callbackLeScan);
         callbackLeScan = null;
     } // ()
 
-    private void mostrarInformacionDispositivoBTLE( BluetoothDevice bluetoothDevice, int rssi, byte[] bytes) {
+    private void mostrarInformacionDispositivoBTLE(BluetoothDevice bluetoothDevice, int rssi, byte[] bytes) {
 
         Log.d(ETIQUETA_LOG, " ****************************************************");
         Log.d(ETIQUETA_LOG, " ****** DISPOSITIVO DETECTADO BTLE ****************** ");
         Log.d(ETIQUETA_LOG, " ****************************************************");
         Log.d(ETIQUETA_LOG, " nombre = " + bluetoothDevice.getName());
         Log.d(ETIQUETA_LOG, " dirección = " + bluetoothDevice.getAddress());
-        Log.d(ETIQUETA_LOG, " rssi = " + rssi );
+        Log.d(ETIQUETA_LOG, " rssi = " + rssi);
 
         Log.d(ETIQUETA_LOG, " bytes = " + new String(bytes));
         Log.d(ETIQUETA_LOG, " bytes (" + bytes.length + ") = " + Utilidades.bytesToHexString(bytes));
@@ -233,125 +264,123 @@ public class ReceptorBluetooth {
         /*double ratio = rssi*1.0/(txPower-7);
         return (0.89976)*Math.pow(ratio,7.7095) + 0.111;*/
 
-        double ratio = rssi*1.0/txPower;
+        double ratio = rssi * 1.0 / txPower;
         if (ratio < 1.0) {
-            return Math.pow(ratio,10);
-        }
-        else {
-            return (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return Math.pow(ratio, 10);
+        } else {
+            return (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
         }
 
     }
 
     Thread avisador = null;
 
-    public void activarAvisador(int mode, int parameter){
-        if(ultimaMedicion == null) {
+    public void activarAvisador(int mode, int parameter) {
+        /*
+
+        if (ultimaMedicion == null) {
             Log.d("Activador", "Avisador null");
-            buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
-            //Toast.makeText(context, "No se detecta el dispositivo. Tienes el bluetooth y el sensor activados?", Toast.LENGTH_SHORT).show();
-            Switch swt = ((Activity)context).findViewById(R.id.switch1);
-            swt.setChecked(true);
-            TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
-            txtview.setText("Avisador activo");
+            buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID("GRUP3-GTI-PROY-3"));
+            Toast.makeText(context, "No se detecta el dispositivo. Tienes el bluetooth y el sensor activados?", Toast.LENGTH_SHORT).show();
             return;
         }
-        Switch swt = ((Activity)context).findViewById(R.id.switch1);
-        swt.setChecked(true);
-        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+         */
+        TextView txtview = ((Activity) context).findViewById(R.id.textView_Activador);
         txtview.setText("Avisador activo");
-        if (mode==0){
-            avisador = new Thread(new Avisador(mode ,parameter));
-        } else if(mode==1) {
+        if (mode == 0) {
+            Toast.makeText(context, "Avisador activado con una distancia de " + parameter + " metros.", Toast.LENGTH_SHORT).show();
+            avisador = new Thread(new Avisador(mode, parameter));
+        } else if (mode == 1) {
+            Toast.makeText(context, "Avisador activado con un delay de " + parameter + " milisegundos.", Toast.LENGTH_SHORT).show();
             avisador = new Thread(new Avisador(mode, parameter));
         }
         avisador.start();
-        /*else {
-            Thread a = new Thread(new Avisador(mode, parameter));
-        }*/
 
     }
 
-    public synchronized void continuarAvisador(){
-        if(avisador == null){
+    public synchronized void continuarAvisador() {
+        if (avisador == null) {
             Log.d("Activador", "Avisador null");
             return;
         }
         isRunning = true;
         Toast.makeText(context, "¡Avisador activo!", Toast.LENGTH_SHORT).show();
-        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
-        Switch swt = ((Activity)context).findViewById(R.id.switch1);
-        swt.setChecked(true);
+        TextView txtview = ((Activity) context).findViewById(R.id.textView_Activador);
         txtview.setText("Avisador activo");
     }
 
-    public synchronized void pausarAvisador(){
-       if(avisador == null){
-           Log.d("Activador", "Avisador null");
-           return;
-       }
-       Toast.makeText(context, "¡Avisador pausado!", Toast.LENGTH_SHORT).show();
-       TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
-       Switch swt = ((Activity)context).findViewById(R.id.switch1);
-       swt.setChecked(false);
-       txtview.setText("Avisador pausado");
-       isRunning = false;
-    }
-
-
-    public void detenerAvisador(){
-        if(avisador == null){
+    public synchronized void pausarAvisador() {
+        isRunning = false;
+        if (avisador == null) {
             Log.d("Activador", "Avisador null");
             return;
         }
-        Toast.makeText(context, "¡Avisador detenido!", Toast.LENGTH_SHORT).show();
-        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
-        Switch swt = ((Activity)context).findViewById(R.id.switch1);
-        swt.setChecked(false);
-        txtview.setText("Avisador detenido");
-        avisador.interrupt();
+        Toast.makeText(context, "¡Avisador pausado!", Toast.LENGTH_SHORT).show();
+        TextView txtview = ((Activity) context).findViewById(R.id.textView_Activador);
+        txtview.setText("Avisador pausado");
     }
 
-    private class Avisador implements Runnable{
+
+    public void detenerAvisador() {
+        isRunning = false;
+        avisador.interrupt();
+        avisador = null;
+        Toast.makeText(context, "¡Avisador detenido!", Toast.LENGTH_SHORT).show();
+        TextView txtview = ((Activity) context).findViewById(R.id.textView_Activador);
+        txtview.setText("Avisador detenido");
+    }
+
+    private class Avisador implements Runnable {
         private int cont = 0;
 
         int mode = -1;
-        int parameter;
+        long parameter;
+        long time;
 
-        public Avisador(int mode, int parameter){
+        public Avisador(int mode, long parameter) {
             isRunning = true;
             this.mode = mode;
             this.parameter = parameter;
+            this.time = new Date().getTime();;
         }
 
 
-        public void setCallback(){
+        public void setCallback() {
             Log.d("Avisador", "buscarEsteDispositivo");
             cont = 0;
-            //buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
+            buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID("GRUP3-GTI-PROY-3"));
         }
 
         @Override
         public void run() {
-            while(isRunning){
-                if(mode == 0) if(setCriterioDistancia(parameter)){
-                    Toast.makeText(context, "distansia reached", Toast.LENGTH_SHORT).show();
-                }
-                if(mode==1) if(setCriterioTiempo(parameter)){
-                    Log.d("Avisador", "Time reached!");
-                    lf.guardarMedicion(ultimaMedicion, context);
+            for(;;){
+                while (isRunning) {
+                    switch (mode) {
+                        case 0:
+                            //if (setCriterioDistancia()) {}
+                            break;
+                        case 1:
+                            if (setCriterioTiempo()) {
+                                Log.d("THREAD", "Time reached!");
+                                time = new Date().getTime();
+                                setCallback();
+                                if(ultimaMedicion!=null)
+                                    lf.guardarMedicion(ultimaMedicion, context);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
-        public Boolean setCriterioTiempo(int tiempo) {
+        public Boolean setCriterioTiempo() {
             //TODO intervalo de tiempo que cuando acabe se avise para obtenerMedicion()
-            try {
-                Date date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ultimaMedicion.getDate());
-                Long current = new Date().getTime();
-                if((date1.getTime()+tiempo)==current) { return true; }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            //Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ultimaMedicion.getDate());
+            Long current = new Date().getTime();
+            if (current>=this.time+this.parameter) { //current - date <= tiempo
+                return true;
             }
             return false;
             //Enviar aviso
@@ -373,7 +402,7 @@ public class ReceptorBluetooth {
 
             float distanciaDesdeUltimaMed = ubicacionActual.distanceTo(ubicacionUltimaMedicion);
             //if calcular distancia entre los dos puntos => distancia --> Avisar
-            if(distanciaDesdeUltimaMed >= distancia) return true;
+            if (distanciaDesdeUltimaMed >= distancia) return true;
             return false;
         }
 
