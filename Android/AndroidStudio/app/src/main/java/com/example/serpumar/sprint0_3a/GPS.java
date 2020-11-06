@@ -10,9 +10,7 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.serpumar.sprint0_3a.ClasesPojo.Ubicacion;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
