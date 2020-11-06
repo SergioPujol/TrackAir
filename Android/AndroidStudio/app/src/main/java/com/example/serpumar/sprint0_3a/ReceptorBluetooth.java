@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class ReceptorBluetooth {
 
-    LogicaFake lf = new LogicaFake();
+    LogicaFake lf;
 
     private BluetoothAdapter.LeScanCallback callbackLeScan = null;
 
@@ -42,6 +42,7 @@ public class ReceptorBluetooth {
 
     public void setContext(Context context) {
         this.context = context;
+        lf= new LogicaFake(context);
     }
 
     private Medicion ultimaMedicion = null;
@@ -62,7 +63,7 @@ public class ReceptorBluetooth {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = dateFormat.format(Calendar.getInstance().getTime().getTime());
 
-            ultimaMedicion = new Medicion(medicion, ub, date);
+            ultimaMedicion = new Medicion(medicion, ub, date, "SO2");
 
             EditText cajaLectura = (EditText) ((Activity) context).findViewById(R.id.cajaSensor);
             cajaLectura.setText(getUltimaMedicion().getMedicion() + " ug/m3 - " + getUltimaMedicion().getDate() + " - " + getUltimaMedicion().getUbicacion().getLatitud() + ", " + getUltimaMedicion().getUbicacion().getLongitud());
@@ -408,5 +409,6 @@ public class ReceptorBluetooth {
 
 
     }
+
 
 }

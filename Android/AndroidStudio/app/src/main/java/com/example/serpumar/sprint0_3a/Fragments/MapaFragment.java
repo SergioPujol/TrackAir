@@ -26,7 +26,6 @@ public class MapaFragment extends Fragment {
     private ReceptorBluetooth receptorBluetooth = new ReceptorBluetooth();
 
     private GPS gps = new GPS();
-    private LogicaFake lf = new LogicaFake();
 
     public MapaFragment() {
         // Required empty public constructor
