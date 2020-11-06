@@ -3,31 +3,25 @@ package com.example.serpumar.sprint0_3a;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.serpumar.sprint0_3a.ClasesPojo.Medicion;
+import com.example.serpumar.sprint0_3a.ClasesPojo.Ubicacion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class LogicaFake {
@@ -59,9 +53,6 @@ public class LogicaFake {
                 Log.d("Response", response.toString());
                 //TODO Devolver esto
 
-                Activity Activitycontext_ = (Activity) context;
-                TextView textoValores = (TextView) Activitycontext_.findViewById(R.id.textView_valores);
-                textoValores.setText(response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
@@ -109,13 +100,13 @@ public class LogicaFake {
     // -->
     // guardarMedicion() -->
     // ...............................................................................
-    public void guardarMedicion(int medicion, Ubicacion ubi, String momento, String tipoMedicion, int id) { //Guardar Medicion en la base de datos (POST)
+    public void guardarMedicion(Medicion medicion, int id) { //Guardar Medicion en la base de datos (POST)
 
         Map<String, String> parametros = new HashMap<>();
-        parametros.put("valor", String.valueOf(medicion));
-        parametros.put("ubicacion", ubi.getLatitud() + "," + ubi.getLongitud());
-        parametros.put("momento", momento);
-        parametros.put("tipoMedicion", tipoMedicion);
+        parametros.put("valor", String.valueOf(medicion.getMedicion()));
+        parametros.put("ubicacion", medicion.getUbicacion().getLatitud() + "," + medicion.getUbicacion().getLongitud());
+        parametros.put("momento", medicion.getDate());
+        parametros.put("tipoMedicion", medicion.getTipoMedicion());
         parametros.put("idUsuario", String.valueOf(id));
 
         //Json con valor y ubicacion(latitud y longitud), momento e idUsuario
@@ -298,6 +289,7 @@ public class LogicaFake {
             public void onResponse(JSONObject response) {
 
                 Log.d("Response", response.toString());
+                //TODO: No hacerlo aqui, llamar a un callback
                 try {
                     if (response.getBoolean("existe")) {
 
@@ -306,7 +298,10 @@ public class LogicaFake {
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putInt("Id", response.getInt("id"));
                         editor.commit();
+                        Toast.makeText(context,"Te has logueado", Toast.LENGTH_LONG).show();
+                        ((Activity) context).finish();
                     }
+                    else Toast.makeText(context,"Te has equivocado, vuelve a intentarlo", Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

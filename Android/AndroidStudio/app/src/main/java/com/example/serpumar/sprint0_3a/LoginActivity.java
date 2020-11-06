@@ -14,6 +14,7 @@ import android.widget.EditText;
 public class LoginActivity extends Activity {
 
     private EditText nombre;
+    private EditText contrasenya;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -21,6 +22,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         nombre = (EditText) findViewById(R.id.input_nombre);
+        contrasenya = (EditText) findViewById(R.id.input_password);
 
         Button iniciarSesion = (Button) findViewById(R.id.btn_login);
         iniciarSesion.setOnClickListener(new View.OnClickListener() {
@@ -34,6 +36,7 @@ public class LoginActivity extends Activity {
     }
 
     private void popup() {
+
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -53,8 +56,9 @@ public class LoginActivity extends Activity {
     private void login() {
 
         String nombreUser = nombre.getText().toString();
+        String contrasenyaUser = Utilidades.sha256(contrasenya.getText().toString());
 
+        LogicaFake logicaFake= new LogicaFake(this);
+        logicaFake.login(nombreUser,contrasenyaUser);
     }
-
-
 }

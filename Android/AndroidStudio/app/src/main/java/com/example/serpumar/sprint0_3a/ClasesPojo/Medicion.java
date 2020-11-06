@@ -6,11 +6,13 @@ public class Medicion {
     private int medicion;
     private Ubicacion ubicacion;
     private String date;
+    private  String tipoMedicion;
 
-    public Medicion(int medicion_, Ubicacion ubicacion_, String date_) {
+    public Medicion(int medicion_, Ubicacion ubicacion_, String date_, String tipoMedicion_) {
         this.medicion = medicion_;
         this.ubicacion = ubicacion_;
         this.date = date_;
+        this.tipoMedicion = tipoMedicion_;
     }
 
     public int getMedicion() {
@@ -37,5 +39,11 @@ public class Medicion {
         this.date = date;
     }
 
+    public String getTipoMedicion() {
+        return tipoMedicion;
+    }
 
+    public void setTipoMedicion(String tipoMedicion) {
+        this.tipoMedicion = tipoMedicion;
+    }
 }
