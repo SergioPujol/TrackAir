@@ -200,7 +200,6 @@ module.exports.cargar = function (servidorExpress, laLogica) {
                 respuesta.send(csv);
 
         }) // get /mediciones
-
     
     // .......................................................
     // GET /mediciones oficiales en línea
@@ -237,5 +236,4 @@ module.exports.cargar = function (servidorExpress, laLogica) {
                                     
                 });
         }) // get /mediciones
-
 } // cargar()

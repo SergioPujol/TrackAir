@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class ReceptorBluetooth {
 
-    LogicaFake lf = new LogicaFake();
+    LogicaFake lf;
 
     private BluetoothAdapter.LeScanCallback  callbackLeScan = null;
 
@@ -35,6 +35,7 @@ public class ReceptorBluetooth {
     public void haLlegadoUnBeacon(TramaIBeacon tib) {
 
         Log.d("Contador", "Trama Contador: " + tib.getContador() + " / Contador Guardado: " + contador);
+        lf= new LogicaFake(context_);
 
         if(comprobarBeaconRepetido(tib)) {
             int medicion = Utilidades.bytesToInt(tib.getMinor());
@@ -42,7 +43,7 @@ public class ReceptorBluetooth {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = dateFormat.format(Calendar.getInstance().getTime().getTime());
 
-            lf.guardarMedicion(medicion, ub, date, context_); //Le paso como variable el contexto para poder cambiar el texto en la pantalla del MainActivity
+            lf.guardarMedicion(medicion, ub, date, "CO2",49); //Le paso como variable el contexto para poder cambiar el texto en la pantalla del MainActivity
         } else {
             Log.d("Medicion", "La medicion ya se ha tomado");
         }

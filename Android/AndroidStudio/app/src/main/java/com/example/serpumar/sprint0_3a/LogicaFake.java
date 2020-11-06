@@ -2,6 +2,7 @@ package com.example.serpumar.sprint0_3a;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -30,65 +32,64 @@ import java.util.Map;
 
 public class LogicaFake {
 
-    private String jsonString;
+    private static RequestQueue requestQueue;
+    private String url = "http://192.168.1.88:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
+    private Context context;
 
-    private JSONObject json;
+    public LogicaFake(Context context) {
 
-    private String url = "http://192.168.43.245:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
+        //Iniciamos la cola
+        requestQueue = Volley.newRequestQueue(context);
+        this.context = context;
+    }
 
-    private Activity Activitycontext_;
+    // ...............................................................................
+    // obtenerMediciones() <--
+    // <--
+    // Lista {valor:Real, momento:Datetime, ubicacion:Texto, tipoMedicion:Texto}
+    // ...............................................................................
+    public void obtenerMediciones() { //Obtener todas las mediciones de la base de datos (GET)
 
+        // Empezamos la cola
+        requestQueue.start();
 
-    // medicion:<R> --> enviarMedicion()
-    public void guardarMedicion(int medicion, Ubicacion ubi, String momento, Context context) { //Guardar Medicion en la base de datos (POST)
-        //Json con valorMedida y Ubicacion (latitud y longitud)
-        Map<String, String> parametros = new HashMap<>();
-        parametros.put("valor", String.valueOf(medicion));
-        parametros.put("ubicacion", ubi.getLatitud() + "," + ubi.getLongitud());
-        parametros.put("momento", momento.toString());
-
-        JSONObject jsonParametros = new JSONObject(parametros);
-
-        Log.d("JSON GuardarMedicion",jsonParametros.toString());
-
-        RequestQueue queue = Volley.newRequestQueue(context);
-        JsonRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url + "/insertarMedicion", jsonParametros, new Response.Listener<JSONObject>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/mediciones", null, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("Response", "medicion guardada en base de datos");
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                //TODO Devolver esto
+
+                Activity Activitycontext_ = (Activity) context;
+                TextView textoValores = (TextView) Activitycontext_.findViewById(R.id.textView_valores);
+                textoValores.setText(response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error.Response", error.toString());
             }
-        });
+        }
 
-        queue.add(jsonRequest);
-
+        );
+        requestQueue.add(jsonArrayRequest);
     }
 
-    public void obtenerMedicion(Context context) { //Obtener Medicion de la base de datos (GET)
+    // ...............................................................................
+    //id:Z
+    // -->
+    // obtenerMedicionesDeUsuario() <--
+    // <--
+    // Lista {valor:Real, momento:Datetime, ubicacion:Texto, tipoMedicion:Texto}
+    // ...............................................................................
+    public void obtenerMedicionesDeUsuario(int id) { //Obtener las mediciones del usuario de la base de datos (GET)
 
-        RequestQueue queue = Volley.newRequestQueue(context);
-        Activitycontext_ = (Activity) context;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "/obtenerMediciones", new Response.Listener<String>() {
+        // Empezamos la cola
+        requestQueue.start();
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/mediciones/" + id, null, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(String response) {
-                Log.d("Response", response);
-                jsonString = response;
-                List<JSONObject> list = new ArrayList<JSONObject>();
-                try {
-                    int i;
-                    JSONArray array = new JSONArray(jsonString);
-                    json= array.getJSONObject(array.length()-1);
-                } catch (JSONException e) {
-                    Log.d("Error Json",e.getMessage());
-                }
-                TextView textoValores = (TextView)Activitycontext_.findViewById(R.id.textView_valores);
-                textoValores.setText(json.toString());
-
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                //TODO Devolver esto
 
             }
         }, new Response.ErrorListener() {
@@ -100,14 +101,250 @@ public class LogicaFake {
 
         );
 
-        /*stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                5000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
-
-        queue.add(stringRequest);
-
-
+        requestQueue.add(jsonArrayRequest);
     }
 
+    // ...............................................................................
+    // datos:{idUsuario:Z, valor:Real, momento:Datetime, ubicacion:Texto, tipoMedicion:Texto}
+    // -->
+    // guardarMedicion() -->
+    // ...............................................................................
+    public void guardarMedicion(int medicion, Ubicacion ubi, String momento, String tipoMedicion, int id) { //Guardar Medicion en la base de datos (POST)
+
+        Map<String, String> parametros = new HashMap<>();
+        parametros.put("valor", String.valueOf(medicion));
+        parametros.put("ubicacion", ubi.getLatitud() + "," + ubi.getLongitud());
+        parametros.put("momento", momento);
+        parametros.put("tipoMedicion", tipoMedicion);
+        parametros.put("idUsuario", String.valueOf(id));
+
+        //Json con valor y ubicacion(latitud y longitud), momento e idUsuario
+        JSONObject jsonParametros = new JSONObject(parametros);
+
+        Log.d("JSON GuardarMedicion", jsonParametros.toString());
+        // Empezamos la cola
+        requestQueue.start();
+        JsonRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url + "/medicion", jsonParametros, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                Log.d("Response", "medicion guardada en base de datos");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        });
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    //id:Z
+    // -->
+    // obtenerTipoDeMedicion() <--
+    // <--
+    // {id:Z, descripcion:Texto, limite_max:R}
+    // ...............................................................................
+    public void obtenerTipoDeMedicion(String id) { //Obtener tipo de medicion de la base de datos (GET)
+
+        // Empezamos la cola
+        requestQueue.start();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url + "/tipoMedicion/" + id, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Response", response.toString());
+                //TODO Devolver esto
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    //id:Z
+    // -->
+    // obtenerUsuario() <--
+    // <--
+    // {id:Z, nombreUsuario:Texto, contrasenya:Texto, correo:Texto, puntuacion:Z}
+    // ...............................................................................
+    public void obtenerUsuario(int id) { //Obtener usuario de la base de datos (GET)
+
+        // Empezamos la cola
+        requestQueue.start();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url + "/usuario/" + id, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //TODO Devolver esto
+                Log.d("Response", "" + response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    // datos:{nombreUsuario:Texto, contrasenya:Texto, correo:Texto, Puntuacion:Z}
+    // -->
+    // guardarUsuario() -->
+    // ...............................................................................
+    public void guardarUsuario(String nombreUsuario, String contrasenya, String correo, int puntuacion) { //Guardar usuario en la base de datos (POST)
+
+        Map<String, String> parametros = new HashMap<>();
+        parametros.put("nombreUsuario", nombreUsuario);
+        parametros.put("contrasenya", contrasenya);
+        parametros.put("correo", correo);
+        parametros.put("puntuacion", String.valueOf(puntuacion));
+
+        //Json con nombreUsuario, contrasenya, correo y puntuacion
+        JSONObject jsonParametros = new JSONObject(parametros);
+
+        Log.d("JSON GuardarUsuario", jsonParametros.toString());
+
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url + "/usuario", jsonParametros, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Response", "Usuario guardado en base de datos");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        });
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    // datos:{id=Z, nombreUsuario:Texto, contrasenya=Texto, correo=Texto, puntuacion=Texto}
+    // -->
+    // editarUsuario() -->
+    // ...............................................................................
+    public void editarUsuario(int id, String nombreUsuario, String contrasenya, String correo, int puntuacion) { //Editar usuario en la base de datos (POST)
+
+        Map<String, String> parametros = new HashMap<>();
+        parametros.put("id", String.valueOf(id));
+        parametros.put("nombreUsuario", nombreUsuario);
+        parametros.put("contrasenya", contrasenya);
+        parametros.put("correo", correo);
+        parametros.put("puntuacion", String.valueOf(puntuacion));
+
+        //Json con id, nombreUsuario, contrasenya, correo y puntuacion
+        JSONObject jsonParametros = new JSONObject(parametros);
+
+        Log.d("JSON editarUsuario", jsonParametros.toString());
+
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url + "/editarUsuario", jsonParametros, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Response", "Usuario modificado en base de datos");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        });
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    //datos:{nombreUsuario:Texto, contrasenya=Texto}
+    // -->
+    // login() <--
+    // <--
+    // {existe:true, id:Z || existe:false}
+    // ...............................................................................
+    public void login(String nombreUsuario, String contrasenya) { //Hacer el login en en la base de datos (POST)
+
+        Map<String, String> parametros = new HashMap<>();
+        parametros.put("nombreUsuario", nombreUsuario);
+        parametros.put("contrasenya", contrasenya);
+
+        //Json con nombreUsuario y contrasenya
+        JSONObject jsonParametros = new JSONObject(parametros);
+
+        Log.d("JSON login", jsonParametros.toString());
+
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url + "/login", jsonParametros, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                Log.d("Response", response.toString());
+                try {
+                    if (response.getBoolean("existe")) {
+
+                        Activity ActivityContext = (Activity) context;
+                        SharedPreferences sharedPref = ActivityContext.getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("Id", response.getInt("id"));
+                        editor.commit();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    // ...............................................................................
+    // obtenerRecompensas() <--
+    // <--
+    // Lista {id:Texto, titulo:Texto, descripcion:Texto, coste:Z}
+    // ...............................................................................
+    public void obtenerRecompensas() { //Obtener todas las recompensas de la base de datos (GET)
+
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/recompensas", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                //TODO Devolver esto
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        requestQueue.add(jsonArrayRequest);
+    }
 }
