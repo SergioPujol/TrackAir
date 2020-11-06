@@ -4,9 +4,19 @@ let modal = document.querySelector(".modal");
 // Si le da click al botón de usuario, se abre el popup
 botonUsuario.addEventListener("click", (e) => {
   let id = getCookie("id");
+  let logout = false;
   if (id != "") {
-    let logout = confirm(`UserId: ${id} \n Quiere cerrar sesión?`);
-    if (logout) laLogica.logout();
+    let info = laLogica.recuperarDatosUsuarioConId(id).then((e) => {
+      console.log("aaa");
+      console.log(e);
+      logout = confirm(
+        `Bienvenido, ${e.nombre_usuario}. \n Tu puntuación: ${e.puntuacion} \n Tu correo: ${e.correo} \n Quiere cerrar sesión?`
+      );
+      if (logout) laLogica.logout();
+    });
+
+    //console.log(info.then());
+    //logout = true;
   } else {
     modal.style.display = "block";
   }

@@ -65,6 +65,17 @@ class Logica {
     }
   }
 
+  //Hace una petición GET para recuperar los datos del usuario mediante su id
+  // id:Z -> recuperarDatosUsuarioConId() -> {nombre_usuario:texto, contrasenya:texto, correo:texto, puntuacion:Z, id:Z}
+  async recuperarDatosUsuarioConId(id) {
+    let recurso = "usuario";
+    let res = await axios.get(`${servidor}:${puerto}/${recurso}/${id}`);
+
+    let data = res.data;
+    //console.log(data);
+    return data;
+  }
+
   //Destruye la cookie que se había creado para el inicio de sesión
   logout() {
     document.cookie = "id= ; expires= Thu, 01 Jan 1970 00:00:00 GMT";
