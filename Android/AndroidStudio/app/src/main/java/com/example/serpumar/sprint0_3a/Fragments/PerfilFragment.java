@@ -1,4 +1,4 @@
-package com.example.serpumar.sprint0_3a;
+package com.example.serpumar.sprint0_3a.Fragments;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.serpumar.sprint0_3a.R;
 
 public class PerfilFragment extends Fragment {
 

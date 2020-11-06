@@ -5,27 +5,22 @@ package com.example.serpumar.sprint0_3a;
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.serpumar.sprint0_3a.Fragments.MapaFragment;
+import com.example.serpumar.sprint0_3a.Fragments.PerfilFragment;
+import com.example.serpumar.sprint0_3a.Fragments.RecompensasFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.UUID;
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     private BottomNavigationView bottomNavigationView;
 

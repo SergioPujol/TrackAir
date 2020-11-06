@@ -1,5 +1,6 @@
 package com.example.serpumar.sprint0_3a;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
@@ -7,14 +8,18 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.location.Location;
-import android.os.Handler;
 import android.util.Log;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.serpumar.sprint0_3a.ClasesPojo.Medicion;
+import com.example.serpumar.sprint0_3a.ClasesPojo.Ubicacion;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 public class ReceptorBluetooth {
@@ -38,6 +43,7 @@ public class ReceptorBluetooth {
     }
 
     private Medicion ultimaMedicion = null;
+    private boolean isRunning = false;
 
     public Medicion getUltimaMedicion() {
         return ultimaMedicion;
@@ -237,38 +243,85 @@ public class ReceptorBluetooth {
 
     }
 
+    Thread avisador = null;
 
     public void activarAvisador(int mode, int parameter){
-        if(ultimaMedicion == null) buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
+        if(ultimaMedicion == null) {
+            Log.d("Activador", "Avisador null");
+            buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
+            //Toast.makeText(context, "No se detecta el dispositivo. Tienes el bluetooth y el sensor activados?", Toast.LENGTH_SHORT).show();
+            Switch swt = ((Activity)context).findViewById(R.id.switch1);
+            swt.setChecked(true);
+            TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+            txtview.setText("Avisador activo");
+            return;
+        }
+        Switch swt = ((Activity)context).findViewById(R.id.switch1);
+        swt.setChecked(true);
+        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+        txtview.setText("Avisador activo");
         if (mode==0){
-            Thread a = new Thread(new Avisador(mode ,parameter));
-            a.start();
+            avisador = new Thread(new Avisador(mode ,parameter));
         } else if(mode==1) {
-            Thread a = new Thread(new Avisador(mode, parameter));
-        } /*else {
+            avisador = new Thread(new Avisador(mode, parameter));
+        }
+        avisador.start();
+        /*else {
             Thread a = new Thread(new Avisador(mode, parameter));
         }*/
 
     }
 
-    private class Avisador implements Runnable{
+    public synchronized void continuarAvisador(){
+        if(avisador == null){
+            Log.d("Activador", "Avisador null");
+            return;
+        }
+        isRunning = true;
+        Toast.makeText(context, "¡Avisador activo!", Toast.LENGTH_SHORT).show();
+        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+        Switch swt = ((Activity)context).findViewById(R.id.switch1);
+        swt.setChecked(true);
+        txtview.setText("Avisador activo");
+    }
 
-        private boolean isRunning = false;
+    public synchronized void pausarAvisador(){
+       if(avisador == null){
+           Log.d("Activador", "Avisador null");
+           return;
+       }
+       Toast.makeText(context, "¡Avisador pausado!", Toast.LENGTH_SHORT).show();
+       TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+       Switch swt = ((Activity)context).findViewById(R.id.switch1);
+       swt.setChecked(false);
+       txtview.setText("Avisador pausado");
+       isRunning = false;
+    }
+
+
+    public void detenerAvisador(){
+        if(avisador == null){
+            Log.d("Activador", "Avisador null");
+            return;
+        }
+        Toast.makeText(context, "¡Avisador detenido!", Toast.LENGTH_SHORT).show();
+        TextView txtview = ((Activity)context).findViewById(R.id.textView_Activador);
+        Switch swt = ((Activity)context).findViewById(R.id.switch1);
+        swt.setChecked(false);
+        txtview.setText("Avisador detenido");
+        avisador.interrupt();
+    }
+
+    private class Avisador implements Runnable{
         private int cont = 0;
 
         int mode = -1;
         int parameter;
-        int [] parameters;
-
-        public Avisador(){
-            isRunning = false;
-        }
-        public Avisador(int mode, int [] parameters){
-            isRunning = false;
-        }
 
         public Avisador(int mode, int parameter){
             isRunning = true;
+            this.mode = mode;
+            this.parameter = parameter;
         }
 
 
@@ -278,26 +331,28 @@ public class ReceptorBluetooth {
             //buscarEsteDispositivoBTLEYObtenerMedicion(Utilidades.stringToUUID( "GRUP3-GTI-PROY-3"));
         }
 
-        public void apagar(){
-            isRunning = false;
-        }
-
-        public void encender(){
-            isRunning = true;
-        }
-
         @Override
         public void run() {
-            Log.d("Avisador", "Entra?");
             while(isRunning){
-                if(setCriterioDistancia(100)/*setCriterioTiempo(100)*/) setCallback();
+                if(mode == 0) if(setCriterioDistancia(parameter)){
+                    Toast.makeText(context, "distansia reached", Toast.LENGTH_SHORT).show();
+                }
+                if(mode==1) if(setCriterioTiempo(parameter)){
+                    Log.d("Avisador", "Time reached!");
+                    lf.guardarMedicion(ultimaMedicion, context);
+                }
             }
         }
 
-        public Boolean setCriterioTiempo(int tiempoSegundos) {
+        public Boolean setCriterioTiempo(int tiempo) {
             //TODO intervalo de tiempo que cuando acabe se avise para obtenerMedicion()
-
-            if(cont == 60) { return true; }
+            try {
+                Date date1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ultimaMedicion.getDate());
+                Long current = new Date().getTime();
+                if((date1.getTime()+tiempo)==current) { return true; }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             return false;
             //Enviar aviso
         }
