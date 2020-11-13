@@ -47,12 +47,12 @@ module.exports = class Logica {
   // .................................................................
 
   async borrarFilasDeTodasLasTablas() {
-    await this.borrarFilasDe("codigosrecompensas");
+    // await this.borrarFilasDe("codigosrecompensas");
     await this.borrarFilasDe("mediciones");
     //await this.borrarFilasDe("tipomedida");
     await this.borrarFilasDe("usuarios");
     await this.borrarFilasDe("medicionesdeusuarios");
-    await this.borrarFilasDe("recompensas");
+    // await this.borrarFilasDe("recompensas");
   } // ()
 
   // ...............................................................................

@@ -2,6 +2,7 @@ package com.example.serpumar.sprint0_3a;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ public class LogicaFake {
     private static RequestQueue requestQueue;
     private String url = "http://192.168.1.88:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
     private Context context;
+
+    public int id_prueba = -1;
 
     public LogicaFake(Context context) {
 
@@ -296,10 +299,17 @@ public class LogicaFake {
                         Activity ActivityContext = (Activity) context;
                         SharedPreferences sharedPref = ActivityContext.getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putInt("Id", response.getInt("id"));
+                        editor.putInt("id", response.getInt("id"));
                         editor.commit();
                         Toast.makeText(context,"Te has logueado", Toast.LENGTH_LONG).show();
-                        ((Activity) context).finish();
+
+                        Log.d("id fake" , response.getInt("id") + "");
+                        id_prueba = response.getInt("id");
+
+                        Intent intent = new Intent(context, MainActivity.class);
+                        ((Activity)context).startActivity(intent);
+                        ((Activity)context).finish();
+
                     }
                     else Toast.makeText(context,"Te has equivocado, vuelve a intentarlo", Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
