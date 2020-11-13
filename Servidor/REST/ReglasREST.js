@@ -218,7 +218,8 @@ module.exports.cargar = function (servidorExpress, laLogica) {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': "*"
                     // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                }, 
+                body: JSON.stringify({"idEstacion":5}) // body data type must match "Content-Type" header
             };
 
             // Petición HTTP

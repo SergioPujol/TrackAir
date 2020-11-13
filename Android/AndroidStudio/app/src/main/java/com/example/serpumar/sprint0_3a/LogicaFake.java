@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -14,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.serpumar.sprint0_3a.ClasesPojo.Medicion;
 import com.example.serpumar.sprint0_3a.ClasesPojo.Ubicacion;
@@ -22,19 +25,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LogicaFake {
 
     private static RequestQueue requestQueue;
-    private String url = "http://192.168.1.88:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
+    //private String url = "http://192.168.1.131:8080"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
     private Context context;
 
-    public int id_prueba = -1;
+    private String url = "http://igmagi.upv.edu.es"; //Ip Zona Wifi telefono móvil -- SI SE CAMBIA AQUI, en el network_secutiry_config.xml tambien
 
     public LogicaFake(Context context) {
-
         //Iniciamos la cola
         requestQueue = Volley.newRequestQueue(context);
         this.context = context;
@@ -103,8 +107,9 @@ public class LogicaFake {
     // -->
     // guardarMedicion() -->
     // ...............................................................................
-    public void guardarMedicion(Medicion medicion, int id) { //Guardar Medicion en la base de datos (POST)
+    public void guardarMedicion(Medicion medicion) { //Guardar Medicion en la base de datos (POST)
 
+        int id = 35;
         Map<String, String> parametros = new HashMap<>();
         parametros.put("valor", String.valueOf(medicion.getMedicion()));
         parametros.put("ubicacion", medicion.getUbicacion().getLatitud() + "," + medicion.getUbicacion().getLongitud());
@@ -302,14 +307,9 @@ public class LogicaFake {
                         editor.putInt("id", response.getInt("id"));
                         editor.commit();
                         Toast.makeText(context,"Te has logueado", Toast.LENGTH_LONG).show();
-
-                        Log.d("id fake" , response.getInt("id") + "");
-                        id_prueba = response.getInt("id");
-
-                        Intent intent = new Intent(context, MainActivity.class);
-                        ((Activity)context).startActivity(intent);
-                        ((Activity)context).finish();
-
+                        Intent intent = new Intent(context,MainActivity.class);
+                        ((Activity) context).startActivity(intent);
+                        ((Activity) context).finish();
                     }
                     else Toast.makeText(context,"Te has equivocado, vuelve a intentarlo", Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
@@ -323,6 +323,81 @@ public class LogicaFake {
             }
         });
         requestQueue.add(jsonObjectRequest);
+    }
+
+    public void obtenerMedicion(final Context context) { //Obtener Medicion de la base de datos (GET)
+       // Empezamos la cola
+        requestQueue.start();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/mediciones", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                //TODO Devolver esto
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
+                textoValores.setText(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void obtenerMedicionesOficialesAPI(final Context context) { //Obtener Medicion de la base de datos (GET)
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/medicionesOficiales", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                List<JSONObject> list = new ArrayList<JSONObject>();
+
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
+                textoValores.setText(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void obtenerMedicionesOficialesLOCAL(final Context context) { //Obtener Medicion de la base de datos (GET)
+        // Empezamos la cola
+        requestQueue.start();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url + "/medicionesOficialesCSV", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Response", response.toString());
+                List<JSONObject> list = new ArrayList<JSONObject>();
+
+                TextView textoValores = ((Activity) context).findViewById(R.id.cajaMediciones);
+                textoValores.setText(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", error.toString());
+            }
+        }
+
+        );
+        requestQueue.add(jsonArrayRequest);
     }
 
     // ...............................................................................
