@@ -123,7 +123,7 @@ module.exports = class Logica {
             "update usuarios set nombre_usuario= ?, contrasenya= ?, correo= ?, puntuacion=?, telefono=?, id_nodo=? where id=  ?;";
 
         return new Promise((resolver, rechazar) => {
-            this.laConexion.query(textoSQL, [datos.nombreUsuario, datos.contrasenya, datos.correo, datos.puntuacion, datos.telefono, datos.idNodo datos.id, ],
+            this.laConexion.query(textoSQL, [datos.nombreUsuario, datos.contrasenya, datos.correo, datos.puntuacion, datos.telefono, datos.idNodo, datos.id],
                 function (err) {
                     err ? rechazar(err) : resolver();
                 }
